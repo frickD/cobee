@@ -27,8 +27,8 @@
         <a class="navbar-brand" style="margin-right: 0;" href="index.html">
         <img style="max-width:50px" src="img/white_logo.png">
       </a>
-      <div class="input-group" style="max-width:180px">
-        <input type="text" class="form-control" placeholder="PLZ eingeben" aria-label="PLZ eingeben" aria-describedby="basic-addon2">
+      <div id="zip-input" class="input-group" style="max-width:180px">
+        <input type="number" min="1" inputmode="numeric" pattern="[0-9]*" max="5" class="form-control" placeholder="PLZ eingeben" aria-label="PLZ eingeben" aria-describedby="basic-addon2">
         <div class="input-group-append">
           <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
         </div>
@@ -89,7 +89,7 @@
   </div>
 
   <div id="camera-content" style="display:none">
-    <div class="container" style="">
+    <div class="container" style="margin-top: 90px;">
       <div class="card">
         <div class="card-header color-background">
           AI Medikamenten-Scan
@@ -106,8 +106,73 @@
     </div>
   </div>
 
+  <div id="info-content" style="display:none">
+    <div class="container" style="margin-top: 90px;">
+      <div class="card">
+        <div class="card-header color-background">
+          Informationen zu CoBee.
+        </div>
+        <div class="card-body">
+          <div class="text-center">
+            <img  style="width:100px"src="img/cobee/info.png"></img>
+          </div>
+          <h5 style="margin-top:30px"class="card-title">Willkommen bei CoBee.</h5>
+          <p class="card-text">Auf dieser Seite findest du wichtige Informationen zu CoBee. Mit CoBee wollen wir den Virus weitereindämmen, die Kurve abflachen und dabei helfen den Shopbesuch, egal ob Apotheke oder Supermarkt, zu verbessern.</p>
+        </div>
+      </div>
 
-  <div class="jumbotron text-center" style="margin-top: 50px;margin-bottom:0;background:white!important"></div>
+      <div id="accordion" style="margin-top:30px">
+
+        <div class="card">
+          <div class="card-header color-background" id="headingTwo">
+            <h5 class="mb-0">
+              <button  style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                Wozu CoBee?
+              </button>
+            </h5>
+          </div>
+          <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header color-background" id="headingTwo">
+            <h5 class="mb-0">
+              <button style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Wie kann Helfer werden?
+              </button>
+            </h5>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header color-background" id="headingThree">
+            <h5 class="mb-0">
+              <button style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Technischer Hintergrund zu CoBee.
+              </button>
+            </h5>
+          </div>
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+            <div class="card-body">
+              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div class="jumbotron text-center" style="margin-top: 50px;margin-bottom:0;background:#dcdcdc!important"></div>
 </div>
 
 </body>
@@ -159,10 +224,14 @@ var tabs = [{
   }];
 
   function displayTab(tab) {
+    $("#zip-input").hide();
     tabs.forEach(function(element) {
       if (element.id == tab) {
         if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 1);
         $("#" + element.id + "-content").fadeIn();
+        if(tab == "home"){
+          $("#zip-input").fadeIn();
+        }
       } else {
         if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 0.5);
         $("#" + element.id + "-content").hide();
