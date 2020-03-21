@@ -5,68 +5,169 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/all.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+  crossorigin=""/>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-database.js"></script>
+  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+  crossorigin=""></script>
+  <script src="lib/anime/anime.min.js"></script>
 </head>
 <body>
 
-<nav class="navbar navbar-expand-sm bg-dark navbar-dark">
-  <a class="navbar-brand" href="#">CoBee</a>
-  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#collapsibleNavbar">
-    <span class="navbar-toggler-icon"></span>
-  </button>
-  <div class="collapse navbar-collapse" id="collapsibleNavbar">
-    <ul class="navbar-nav">
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-      <li class="nav-item">
-        <a class="nav-link" href="#">Link</a>
-      </li>
-    </ul>
-  </div>
-</nav>
+  <nav class="navbar navbar-light fixed-top cobee-header">
 
-<div class="jumbotron text-center" style="margin-bottom:0">
-  <h1>CoBee</h1>
-</div>
-
-<div class="container" style="margin-top:30px">
-  <div class="row">
-    <div class="col-sm-6" style="text-align:center">
-
+        <a class="navbar-brand" style="margin-right: 0;" href="index.html">
+        <img style="max-width:50px" src="img/white_logo.png">
+      </a>
+      <div class="input-group" style="max-width:180px">
+        <input type="text" class="form-control" placeholder="PLZ eingeben" aria-label="PLZ eingeben" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
+        </div>
       </div>
-    <div class="col-sm-6" style="text-align:center">
+        <div id="login-button" onclick="pressedLoginButton()" class="navbar-login-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill:white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+    </nav>
 
+    <nav class="navbar-default fixed-bottom navbar-footer text-center">
+      <div class="container drella-footer">
+        <a class="navbar-brand mx-auto" href="#">
+      <img id="info-button" onclick="displayTab('info')" class="navicon" alt="guest" src="img/icons/info.png" style="opacity:0.5">
+      <img id="home-button" onclick="displayTab('home')" class="navicon" alt="home" src="img/icons/home-in.png" style="">
+      <img id="camera-button" onclick="displayTab('camera')" class="navicon" alt="camera" src="img/icons/camera.png" style="opacity:0.5">
+    </a>
+      </div>
+    </nav>
+
+<div id="app-content" style="margin-top:80px">
+
+  <div id="home-content">
+    <div class="color-background text-center" style="margin-top:80px">
+      <div style="width: 100%;overflow-x: auto;">
+        <div style="display:inline-flex; margin:10px">
+        <span style="margin-right:10px" class="badge badge-light">Apotheken</span>
+        <span style="margin-right:10px" class="badge badge-light">Supermärkte</span>
+        <span style="margin-right:10px" class="badge badge-light">Tankstellen</span>
+        <span style="margin-right:10px" class="badge badge-light">Restaurant</span>
+      </div>
       </div>
     </div>
-</div>
 
-<div class="jumbotron text-center" style="margin-top: 50px;margin-bottom:0">
-  <form style="display: inline-table;">
-  <div class="form-row align-items-center">
-    <div class="col-auto">
-      <label class="sr-only" for="path-input">Wegname</label>
-      <input type="text" class="form-control mb-2" id="path-input" placeholder="Wegnamen eingeben...">
-    </div>
-    <div class="col-auto">
-      <button onclick="writePath()" class="btn btn-primary mb-2">Weg speichern</button>
+    <div id="mapid" style="height:350px; position: sticky!important;border-bottom: 5px solid #499CA3;"></div>
+
+    <div class="container" style="">
+      <div class="row">
+        <div class="col-4">
+          <div id="cobee-icon">
+            <img  src="img/cobee/wink.gif" style="padding: 5px;width:100px;border-top: 5px solid #499CA3;"></img>
+          </div>
+        </div>
+        <div class="col-8">
+          <h5 style="margin-top:8px">
+            Stelle eine Frage an CoBee!
+          </h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="input-group">
+            <input type="text" class="form-control" placeholder="z.B. Was hilft gegen Kopfschmerzen?" aria-label="CoBee" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button class="btn btn-cobee" type="button">GO</button>
+            </div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
-</form>
+
+  <div id="camera-content" style="display:none">
+    <div class="container" style="">
+      <div class="card">
+        <div class="card-header color-background">
+          AI Medikamenten-Scan
+        </div>
+        <div class="card-body">
+          <div class="text-center">
+            <img  style="width:100px"src="img/cobee/camera.png"></img>
+          </div>
+          <h5 style="margin-top:30px"class="card-title">Scanne deine Medikamente.</h5>
+          <p class="card-text">Scanne mit CoBee deine Medikamente, um mehr Informationen wie beispielsweise Gebrauchsanweisung zubekommen. Dank AI kann CoBee dir verraten, was du gerade vor dir hast.</p>
+          <a href="#" class="btn btn-cobee" style="width:100%">Scan starten</a>
+        </div>
+      </div>
+    </div>
   </div>
 
+
+  <div class="jumbotron text-center" style="margin-top: 50px;margin-bottom:0;background:white!important"></div>
 </div>
 
 </body>
 </html>
 
 <script>
+window.onload = function() {
+      initApp();
+};
+
+var mymap = L.map('mapid').setView([48.06649398803711, 11.380158424377441], 13);
+var tile_layer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZGZyaWNrIiwiYSI6ImNrNzM1dmU0NDA5Mmgza252ZnVlNTBhbHQifQ.f9nZLlYYqR8PCjuXPiyn2g', {
+    maxZoom: 20,
+    id: 'mapbox/streets-v11',
+    tileSize: 512,
+    zoomOffset: -1,
+    retina: '@2x',
+    detectRetina: true,
+    accessToken: 'pk.eyJ1IjoiZGZyaWNrIiwiYSI6ImNrNzM1dmU0NDA5Mmgza252ZnVlNTBhbHQifQ.f9nZLlYYqR8PCjuXPiyn2g'
+  });
+tile_layer.addTo(mymap);
+tile_layer.on("load",function() {
+  setTimeout(() => {
+    anime({
+      targets: '#cobee-icon',
+      translateY: -50
+    });
+  }, 1000);
+});
+
+function initApp() {
+
+
+}
+
+
+var tabs = [{
+    id: 'info',
+    isLogin: true,
+    isHighlight: true
+  }, {
+    id: 'home',
+    isLogin: false,
+    isHighlight: true
+  },{
+    id: 'camera',
+    isLogin: true,
+    isHighlight: true
+  }];
+
+  function displayTab(tab) {
+    tabs.forEach(function(element) {
+      if (element.id == tab) {
+        if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 1);
+        $("#" + element.id + "-content").fadeIn();
+      } else {
+        if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 0.5);
+        $("#" + element.id + "-content").hide();
+      }
+    });
+  }
 
 </script>
