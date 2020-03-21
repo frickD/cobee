@@ -10,6 +10,7 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
   integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
   crossorigin=""/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
@@ -232,8 +233,24 @@
         </div>
       </div>
       <div class="modal-footer">
-        <button type="button" class="btn btn-success">Verbindlich bestellen</button>
+        <button  onclick="createOrder()" type="button" class="btn btn-success">Verbindlich bestellen</button>
         <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="order-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bestellung versendet</h5>
+      </div>
+      <div class="modal-body">
+        <p>Deine Bestellung wurde dem Shop übermittelt. Der Shop meldet sich per App oder telefonisch bei dir, sobald dein Paket fertig ist.</p>
+      </div>
+      <div class="modal-footer">
+        <button onclick="window.location.reload()" type="button" class="btn btn-cobee">Okay</button>
       </div>
     </div>
   </div>
@@ -253,6 +270,7 @@ var pharmacyIcon;
 var products;
 var cart = [];
 var cartSum = 0;
+var currentShop;
 
 // Your web app's Firebase configuration
  var firebaseConfig = {
@@ -398,6 +416,7 @@ var tabs = [{
   }
 
   function showShopItems(shopId){
+    currentShop = shopId;
     $("#shop-item-3").attr("src","");
     $("#shop-item-2").attr("src","");
     $("#shop-item-1").attr("src","");
@@ -434,7 +453,7 @@ var tabs = [{
     }else if(cart.length > 0){
       $("#shop-item-1").attr("src",cart[cart.length - 1].img);
     }
-    $("#cart-button").text(cartSumString+ "€ bestellen");
+    $("#cart-button").text(cartSumString+ "€");
   }
 
   function openModal(){
@@ -449,6 +468,19 @@ var tabs = [{
 
     $('#shop-modal').modal('show');
 
+  }
+
+  function createOrder(){
+    $('#shop-modal').modal('hide');
+    $('#order-modal').modal('show');
+    firebase.database().ref("shops/" + currentShop+ "/orders").push().set({
+        uid: "abc",
+        state: "request",
+        firstname: "Daniel",
+        lastname: "Frick",
+        tel: "0176528323",
+        items: cart
+      });
   }
 
 </script>
