@@ -36,7 +36,7 @@
         <div id="login-button" onclick="pressedLoginButton()" class="navbar-login-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill:white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
     </nav>
 
-    <nav class="navbar-default fixed-bottom navbar-footer text-center">
+    <nav id="standard-footer" class="navbar-default fixed-bottom navbar-footer text-center" style="">
       <div class="container drella-footer">
         <a class="navbar-brand mx-auto" href="#">
       <img id="info-button" onclick="displayTab('info')" class="navicon" alt="guest" src="img/icons/info.png" style="opacity:0.5">
@@ -46,9 +46,22 @@
       </div>
     </nav>
 
+    <nav id="shop-cart-footer" class="navbar-default fixed-bottom navbar-footer text-center" style="display:none">
+      <div class="container drella-footer">
+        <a class="navbar-brand mx-auto" href="#">
+          <a onclick="closeShop()" style="color:white"class="btn btn-danger"><i class="far fa-window-close"></i></a>
+
+      <img style="margin-left:10px;width:30px" id="shop-item-1"  class="rounded-circle" alt="" src="" >
+      <img id="shop-item-2"  class="rounded-circle" src="" style="width:30px">
+      <img style="margin-right:10px;width:30px" id="shop-item-3" class="rounded-circle" src="" >
+      <a onclick="openModal()" style="color:white" id="cart-button" class="btn btn-success">0.00€ <i class="fas fa-cart-arrow-down"></i></a>
+    </a>
+      </div>
+    </nav>
+
 <div id="app-content" style="margin-top:80px">
 
-  <div id="home-content" style="display:none">
+  <div id="home-content" style="">
     <div class="color-background text-center" style="margin-top:80px">
       <div style="width: 100%;overflow-x: auto;">
         <div style="display:inline-flex; margin:10px">
@@ -112,25 +125,13 @@
     </div>
   </div>
 
-  <div id="shop-content" style="">
+  <div id="shop-content" style="display:none;">
     <div class="container" style="margin-top: 90px;">
-      <div class="card">
-        <div class="card-header color-background">
-          Bahnhofsplatz 3, Gauting
-        </div>
-        <div class="card-body">
-          <div class="text-center">
-            <img  style="width:100px"src="img/cobee/camera.png"></img>
-          </div>
-          <h5 style="margin-top:30px"class="card-title">Bienen Apotheke.</h5>
-          <p>Auslastung:</p>
-          <div class="progress" style="height: 20px;">
-            <div class="progress-bar color-background" role="progressbar" style="width: 25%;" aria-valuenow="25" aria-valuemin="0" aria-valuemax="100"></div>
-          </div>
-          <br>
-          <p class="card-text">Scanne mit CoBee deine Medikamente, um mehr Informationen wie beispielsweise Gebrauchsanweisung zubekommen. Dank AI kann CoBee dir verraten, was du gerade vor dir hast.</p>
-          <a href="#" class="btn btn-cobee" style="width:100%">Scan starten</a>
-        </div>
+      <div id="shop-header-card" class="card">
+
+      </div>
+      <div id="shop-items" class="row">
+
       </div>
     </div>
   </div>
@@ -204,6 +205,40 @@
   <div class="jumbotron text-center" style="margin-top: 50px;margin-bottom:0;background:#dcdcdc!important"></div>
 </div>
 
+
+<div id="shop-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bestellung verpacken lassen.</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Du hast folgende Sachen zum Verpacken bestellt:</p>
+        <div id="cart-items-modal">
+
+        </div>
+        <br>
+        <p>Wähle eine Bezahlmethode aus:</p>
+        <div class="">
+          <button type="button" class="btn btn-cobee"><i class="fab fa-apple-pay"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fab fa-paypal"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fas fa-toilet-paper"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fab fa-btc"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fab fa-cc-visa"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fab fa-cc-amex"></i></button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-success">Verbindlich bestellen</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 </body>
 </html>
 
@@ -215,6 +250,9 @@ var mymap;
 var shops;
 var layerGroup;
 var pharmacyIcon;
+var products;
+var cart = [];
+var cartSum = 0;
 
 // Your web app's Firebase configuration
  var firebaseConfig = {
@@ -229,6 +267,10 @@ var pharmacyIcon;
  // Initialize Firebase
  firebase.initializeApp(firebaseConfig);
  var database = firebase.database();
+
+ firebase.database().ref('/products/').on('value', function(snapshot) {
+    products = snapshot.val();
+ });
 
  loadMap();
 
@@ -270,7 +312,7 @@ var pharmacyIcon;
         }else{
           var marker = L.marker([shop.cordinate.lat, shop.cordinate.long]).addTo(layerGroup);
         }
-        marker.bindPopup("<b>" + shop.name + "</b><br>"+ shop.adresse+"</b><br><button onclick='alert(\"hallo\")' class='btn btn-cobee' type='button'><i class='fas fa-cart-plus'></i></button>");
+        marker.bindPopup("<b>" + shop.name + "</b><br>"+ shop.adresse+"</b><br><button onclick='showShopItems(\""+ shop.id +"\")' class='btn btn-cobee' type='button'><i class='fas fa-cart-plus'></i></button>");
       });
    });
 
@@ -298,6 +340,10 @@ var tabs = [{
     id: 'camera',
     isLogin: true,
     isHighlight: true
+  },{
+    id: 'shop',
+    isLogin: true,
+    isHighlight: false
   }];
 
   function displayTab(tab) {
@@ -326,13 +372,13 @@ var tabs = [{
     });
     shops.forEach(function(shop){
       if(shop.category == category || category == "all"){
-        $("#shops-container").append("<div class='card' style='margin-top:10px;'><div class='card-header color-background'>" + shop.adresse + ", " + shop.ort + "</div><div class='card-body'><div class='row'><div class='col-4'><img  style='width:100px; padding:10px'src='" + shop.bild +"'></img></div><div class='col-8'><h5 class='card-title'>" + shop.name + ".</h5><p class='card-text'>Tel.: " + shop.telefon +"</p></div></div><a href='#' class='btn btn-cobee' style='width:100%'>Hier bestellen</a></div></div>");
+        $("#shops-container").append("<div class='card' style='margin-top:10px;'><div class='card-header color-background'>" + shop.adresse + ", " + shop.ort + "</div><div class='card-body'><div class='row'><div class='col-4'><img  style='width:100px; padding:10px'src='" + shop.bild +"'></img></div><div class='col-8'><h5 class='card-title'>" + shop.name + ".</h5><p class='card-text'>Tel.: " + shop.telefon +"</p></div></div><a onclick='showShopItems(\""+ shop.id +"\")' href='#' class='btn btn-cobee' style='width:100%'>Hier bestellen</a></div></div>");
         if(shop.category == "pharmacy"){
           var marker = L.marker([shop.cordinate.lat, shop.cordinate.long], {icon: pharmacyIcon}).addTo(layerGroup);
         }else{
           var marker = L.marker([shop.cordinate.lat, shop.cordinate.long]).addTo(layerGroup);
         }
-        marker.bindPopup("<b>" + shop.name + "</b><br>"+ shop.adresse +"</b><br><button onclick='alert(\"hallo\")' class='btn btn-cobee' type='button'><i class='fas fa-cart-plus'></i></button>");
+        marker.bindPopup("<b>" + shop.name + "</b><br>"+ shop.adresse +"</b><br><button onclick='showShopItems(\""+ shop.id +"\")' class='btn btn-cobee' type='button'><i class='fas fa-cart-plus'></i></button>");
       }
     });
     if(category == "all"){
@@ -343,8 +389,65 @@ var tabs = [{
       $("#cobee-container").hide();
     }
     $("#" + category + "-tag").fadeTo("fast", 1);
+  }
 
+  function closeShop(){
+    displayTab("home");
+    $("#shop-cart-footer").hide();
+    $("#standard-footer").fadeIn();
+  }
 
+  function showShopItems(shopId){
+    $("#shop-item-3").attr("src","");
+    $("#shop-item-2").attr("src","");
+    $("#shop-item-1").attr("src","");
+    cartSum = 0.00;
+    $("#cart-button").text(cartSum+ "€ bestellen");
+    cart = [];
+    displayTab("shop");
+    let shop = shops[shopId];
+    $("#shop-header-card").html("");
+    $("#shop-header-card").append("<div class='card-header color-background'>"+ shop.adresse +", "+ shop.ort + "</div><div class='card-body'><div class='text-center'><img  style='width:100px; padding:10px'src='"+ shop.bild + "'></img></div><h5 style='margin-top:30px'class='card-title'>" + shop.name +".</h5><p>Auslastung:</p><div class='progress' style='height: 20px;'><div class='progress-bar color-background' role='progressbar' style='width: 25%;' aria-valuenow='25' aria-valuemin='0' aria-valuemax='100'></div></div><br><p>Tel.: "+ shop.telefon + "</p></div>");
+    $("#shop-cart-footer").fadeIn();
+    $("#standard-footer").hide();
+    $("#shop-items").html("");
+    if(shop.shopitems){
+      shop.shopitems.forEach(function(item){
+        let product = products[item.id];
+        $("#shop-items").append("<div class='col-6' style='margin-top:30px'><div class='card'><img class='card-img-top' style='width:150px; padding:10px' src='" + product.img +"' alt='Card image cap'><div class='card-body'><h6 class='card-title'>"+ product.name +"</h6><p class='card-text'>"+ product.size +"</p><a style='color:white' onclick='addToCart(\"" + product.id +"\")' class='btn btn-cobee'>"+ product.price +"€ <i class='fas fa-cart-plus'></i></a></div></div></div>");
+      });
+    }
+  }
+
+  function addToCart(productId){
+    let product = products[productId];
+    cartSum = cartSum + parseFloat(product.price);
+    let cartSumString = cartSum.toFixed(2);
+    cart.push(product);
+    if(cart.length > 2){
+      $("#shop-item-3").attr("src",cart[cart.length - 3].img);
+      $("#shop-item-2").attr("src",cart[cart.length - 2].img);
+      $("#shop-item-1").attr("src",cart[cart.length -1].img);
+    }else if(cart.length > 1){
+      $("#shop-item-2").attr("src",cart[cart.length - 2].img);
+      $("#shop-item-1").attr("src",cart[cart.length - 1].img);
+    }else if(cart.length > 0){
+      $("#shop-item-1").attr("src",cart[cart.length - 1].img);
+    }
+    $("#cart-button").text(cartSumString+ "€ bestellen");
+  }
+
+  function openModal(){
+    $("#cart-items-modal").html("");
+    if(cart.length > 0){
+      cart.forEach(function(item){
+        $("#cart-items-modal").append("<p>- " + item.name +"</p>");
+      });
+    }else{
+      $("#cart-items-modal").append("<p>Du hast noch nichts im Warenkorb.</p>");
+    }
+
+    $('#shop-modal').modal('show');
 
   }
 
