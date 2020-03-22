@@ -16,6 +16,7 @@
   <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-auth.js"></script>
   <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
   integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
   crossorigin=""></script>
@@ -23,6 +24,12 @@
 </head>
 <body>
 
+  <div id="loader" style="    background: #499ca3;background: linear-gradient(51deg, #499ca3 0%, #3ebf95 100%);position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+    <img class="animated zoomIn" src="img/logoHack.png" style=" position: absolute; margin: auto;top: 0;left: 0;right: 0;bottom: 0;max-width:40%; animation-iteration-count: infinite;">
+  </div>
+
+
+  <div id="app">
   <nav class="navbar navbar-light fixed-top cobee-header">
 
         <a class="navbar-brand" style="margin-right: 0;" href="index.html">
@@ -34,7 +41,7 @@
           <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
         </div>
       </div>
-        <div id="login-button" onclick="pressedLoginButton()" class="navbar-login-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill:white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+        <div id="login-button" onclick="displayTab('profile')" class="navbar-login-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill:white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
     </nav>
 
     <nav id="standard-footer" class="navbar-default fixed-bottom navbar-footer text-center" style="">
@@ -120,7 +127,34 @@
           </div>
           <h5 style="margin-top:30px"class="card-title">Scanne deine Medikamente.</h5>
           <p class="card-text">Scanne mit CoBee deine Medikamente, um mehr Informationen wie beispielsweise Gebrauchsanweisung zubekommen. Dank AI kann CoBee dir verraten, was du gerade vor dir hast.</p>
-          <a href="#" class="btn btn-cobee" style="width:100%">Scan starten</a>
+
+          <form onclick="openGallery()" enctype="multipart/form-data" class="text-center">
+            <label class="custom-file-upload">
+              <input id="file_input" name="files" type="file"/>
+              <i style="font-size:70px;" class="fas fa-camera"></i>
+            </label>
+          </form>
+
+          <a id="send_btn" onclick="sendIBMVR()" class="btn btn-cobee" style="display: none;width:100%;color:white">Analyse starten</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="profile-content" style="display:none">
+    <div class="container" style="margin-top: 90px;">
+      <div class="card">
+        <div class="card-header color-background">
+          Profil
+        </div>
+        <div class="card-body text-center">
+          <div class="text-center">
+            <img  style="width:100px"src="img/cobee/info.png"></img>
+          </div>
+          <h5 style="margin-top:30px"class="card-title" id="profile-name"></h5>
+          <h6 style=""class="card-title" id="profile-email"></h6>
+          <p class="card-text" id="profile-tel"></p>
+          <a onclick="signOut()" class="btn btn-danger" style="width:100%;margin-top: 30px;color:white">Abmelden</a>
         </div>
       </div>
     </div>
@@ -272,6 +306,24 @@
   </div>
 </div>
 
+<div id="login-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bitte Anmelden!</h5>
+      </div>
+      <div class="modal-body">
+        <p>Um dies ausführen zu können, müssen Sie sich bitte zuerst anmelden.</p>
+      </div>
+      <div class="modal-footer">
+        <button onclick="window.location = '/login.html'" type="button" class="btn btn-cobee">Anmelden</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
 </body>
 </html>
 
@@ -287,6 +339,8 @@ var products;
 var cart = [];
 var cartSum = 0;
 var currentShop;
+var isLoggedIn = false;
+var userInformation;
 
 // Your web app's Firebase configuration
  var firebaseConfig = {
@@ -306,6 +360,8 @@ var currentShop;
     products = snapshot.val();
  });
 
+
+
  loadMap();
 
  function loadMap(){
@@ -320,14 +376,9 @@ var currentShop;
        accessToken: 'pk.eyJ1IjoiZGZyaWNrIiwiYSI6ImNrNzM1dmU0NDA5Mmgza252ZnVlNTBhbHQifQ.f9nZLlYYqR8PCjuXPiyn2g'
      });
    tile_layer.addTo(mymap);
-   layerGroup = L.layerGroup().addTo(mymap);
+   layerGroup = L.featureGroup().addTo(mymap);
    tile_layer.on("load",function() {
-     setTimeout(() => {
-       anime({
-         targets: '#cobee-icon',
-         translateY: -50
-       });
-     }, 1000);
+
    });
 
   pharmacyIcon = L.icon({
@@ -340,6 +391,9 @@ var currentShop;
 
    firebase.database().ref('/shops/').on('value', function(snapshot) {
       shops = snapshot.val();
+      displayShops("all");
+      displayShops("all");
+      /*
       shops.forEach(function(shop){
         if(shop.category == "pharmacy"){
           var marker = L.marker([shop.cordinate.lat, shop.cordinate.long], {icon: pharmacyIcon}).addTo(layerGroup);
@@ -347,7 +401,8 @@ var currentShop;
           var marker = L.marker([shop.cordinate.lat, shop.cordinate.long]).addTo(layerGroup);
         }
         marker.bindPopup("<b>" + shop.name + "</b><br>"+ shop.adresse+"</b><br><button onclick='showShopItems(\""+ shop.id +"\")' class='btn btn-cobee' type='button'><i class='fas fa-cart-plus'></i></button>");
-      });
+        mymap.fitBounds(layerGroup.getBounds());
+      });*/
    });
 
  }
@@ -357,14 +412,35 @@ var currentShop;
 
 
 function initApp() {
-
-
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      isLoggedIn = true;
+      firebase.database().ref('/users/' + firebase.auth().currentUser.uid).once('value').then(function(snapshot) {
+              userInformation = {
+                uid: firebase.auth().currentUser.uid,
+                email: firebase.auth().currentUser.email,
+                firstname: (snapshot.val() && snapshot.val().firstname),
+                lastname: (snapshot.val() && snapshot.val().lastname),
+                tel: (snapshot.val() && snapshot.val().tel)
+              };
+             loadUserInformations();
+           });
+    } else {
+      isLoggedIn = false;
+      $("#profile-container").hide();
+    }
+  });
 }
 
+function loadUserInformations(){
+    $("#profile-name").text(userInformation.firstname + " " + userInformation.lastname);
+    $("#profile-email").text(userInformation.email);
+    $("#profile-tel").text("Tel.: " + userInformation.tel);
+}
 
 var tabs = [{
     id: 'info',
-    isLogin: true,
+    isLogin: false,
     isHighlight: true
   }, {
     id: 'home',
@@ -372,10 +448,14 @@ var tabs = [{
     isHighlight: true
   },{
     id: 'camera',
-    isLogin: true,
+    isLogin: false,
     isHighlight: true
   },{
     id: 'shop',
+    isLogin: false,
+    isHighlight: false
+  },{
+    id: 'profile',
     isLogin: true,
     isHighlight: false
   }];
@@ -384,11 +464,19 @@ var tabs = [{
     $("#zip-input").hide();
     tabs.forEach(function(element) {
       if (element.id == tab) {
-        if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 1);
-        $("#" + element.id + "-content").fadeIn();
-        if(tab == "home"){
+        if((element.isLogin && (isLoggedIn==false))){
+          $("#home-content").fadeIn();
+          $("#login-modal").modal('show');
           displayShops("all");
           $("#zip-input").fadeIn();
+        }else{
+          $("#login-modal").modal('hide');
+          if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 1);
+          $("#" + element.id + "-content").fadeIn();
+          if(tab == "home"){
+            displayShops("all");
+            $("#zip-input").fadeIn();
+          }
         }
       } else {
         if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 0.5);
@@ -396,6 +484,7 @@ var tabs = [{
       }
     });
   }
+
 
   function displayShops(category){
     let shopTags = ["pharmacy", "supermarket", "gasstation", "restaurant", "all"];
@@ -413,6 +502,16 @@ var tabs = [{
           var marker = L.marker([shop.cordinate.lat, shop.cordinate.long]).addTo(layerGroup);
         }
         marker.bindPopup("<b>" + shop.name + "</b><br>"+ shop.adresse +"</b><br><button onclick='showShopItems(\""+ shop.id +"\")' class='btn btn-cobee' type='button'><i class='fas fa-cart-plus'></i></button>");
+        setTimeout(function() {
+          mymap.invalidateSize();
+          mymap.fitBounds(layerGroup.getBounds());
+        }, 200);
+        setTimeout(() => {
+          anime({
+            targets: '#cobee-icon',
+            translateY: -50
+          });
+        }, 500);
       }
     });
     if(category == "all"){
@@ -488,15 +587,20 @@ var tabs = [{
 
   function createOrder(){
     $('#shop-modal').modal('hide');
-    $('#order-modal').modal('show');
-    firebase.database().ref("shops/" + currentShop+ "/orders").push().set({
-        uid: "abc",
+    if(isLoggedIn){
+      $('#order-modal').modal('show');
+
+      firebase.database().ref("shops/" + currentShop+ "/orders/" + userInformation.uid).set({
+        uid: userInformation.uid,
         state: "request",
-        firstname: "Daniel",
-        lastname: "Frick",
-        tel: "0176528323",
+        firstname: userInformation.firstname,
+        lastname: userInformation.lastname,
+        tel: userInformation.tel,
         items: cart
       });
+    }else{
+      $('#login-modal').modal('show');
+    }
   }
 
 
@@ -579,6 +683,67 @@ var tabs = [{
 
     }
   }
+
+  function signOut(){
+    firebase.auth().signOut().then(function() {
+       alert("Sie wurden ausgeloggt");
+       window.location.reload();
+     }).catch(function(error) {
+       // An error happened.
+     });
+  }
+
+  function requestAPI(form) {
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://gateway.watsonplatform.net/visual-recognition/api/v3/classify?version=2018-03-19",
+      "method": "POST",
+      "headers": {
+        "authorization": "Basic YXBpa2V5OktndVlSYll0Y3ZvdUVaSEwwdVNDMzl1Rl9aS2lBS2pPd0tVV21rNUNYZ08z"
+      },
+      "processData": false,
+      "contentType": false,
+      "mimeType": "multipart/form-data",
+      "data": form
+    }
+    $.ajax(settings).done(function(response) {
+      var res = JSON.parse(response);
+      console.log(res);
+      if (typeof res.images[0].classifiers[0].classes[0].class != "undefined") {
+        var product = res.images[0].classifiers[0].classes[0].class;
+        if(product=="Dobendan_Pill"){
+          alert("NEO");
+          alert(products[12].name);
+        }
+      }
+    }).fail(function(e) {
+
+    });
+  }
+
+    function openGallery(){
+      $("#send_btn").fadeIn(1000);
+    };
+
+    function sendIBMVR(){
+      //$("#app").hide();
+      //$("#preloader").fadeIn();
+      var form = new FormData();
+      form.append('images_file', $('input[type=file]')[0].files[0]);
+      form.append("classifier_ids", "DefaultCustomModel_933387654");
+      requestAPI(form);
+    };
+
+    function runLoader(shouldRun){
+     if(shouldRun){
+       $("#app").hide();
+       $("#loader").fadeIn();
+     }else{
+       $("#app").fadeIn();
+       $("#loader").hide();
+     }
+    }
 
 
 </script>

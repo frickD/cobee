@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <title>CoBee App - Login</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, width=device-width, height=device-height, viewport-fit=cover">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <!--https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css-->
+  <link rel="stylesheet" href="css/style.css">
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+  <link href="lib/font/font.css" rel="stylesheet">
+  <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-database.js"></script>
+  <!--https://fonts.googleapis.com/css?family=Playfair+Display:700,900-->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+
+  <script src="lib/anime/anime.min.js"></script>
+
+</head>
+
+<body style="color:white">
+  <div id="login-container" class="text-center container" style="display:none">
+
+    <img class="animated infinite pulse" style="width:100px; margin-top:100px;" src="img/white_logo.png">
+    <div id="login-content" class="login-content" style="margin-top:30px">
+      <form>
+        <div class="form-group">
+          <label for="email-login-input">E-Mail</label>
+          <input type="email" class="form-control " id="email-input" placeholder="E-Mail Adresse">
+        </div>
+        <div class="form-group">
+          <label for="password-login-input">Passwort</label>
+          <input type="password" class="form-control " id="password-input" aria-describedby="name-help" placeholder="Passwort">
+        </div>
+      </form>
+      <div class="login-button-container" style="margin-top:30px">
+        <button style="width:100%" id= "login-button" class="btn btn-primary">LOGIN</button>
+        <button style="width:100%; margin-top:10px" onclick="window.location = '/index.html'" class="rounded btn btn-danger">ABBRECHEN</button>
+      </div>
+      <p id="regist-text" class="regist-text">Neu? Hier klicken zum Registrieren!</p>
+    </div>
+    <div id="regist-content" style="margin-top: 40px;padding-left: 40px;padding-right: 40px; margin-bottom: 70px;display:none; margin-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */margin-bottom: env(safe-area-inset-bottom); /* iOS 11.2 */">
+      <p>Wilkommen bei CoBee! Um Bestellungen abgeben zu können, bitten wir dich hier weitere Informationen einzugeben.</p>
+      <form>
+        <div class="form-group">
+          <label for="firstname-regist-input">Name</label>
+          <input type="text"  class="form-control input-login" id="firstname-regist-input" aria-describedby="name-help" placeholder="Vorname">
+          <input type="text" style="margin-top:5px" class="form-control input-login" id="lastname-regist-input" aria-describedby="name-help" placeholder="Nachname">
+          <small id="name-help" style="margin-top:10px" class="form-text text-muted">Bitte Ihren richtigen Namen eingeben, ansonten kann kein Einlass gewährt werden.</small>
+          <input type="number" style="margin-top:5px"class="form-control input-login" id="tel-regist-input" aria-describedby="name-help" placeholder="Telefonnummer">
+        </div>
+      </form>
+      <label style="margin-top:10px" for="login-button-container">Geschlecht</label>
+      <div>
+        <button id="gender-m-regist-input" onclick="setGender('m')" class="rounded login-gender-button-disabled">M</button>
+        <button id="gender-w-regist-input" onclick="setGender('w')"  class="rounded login-gender-button-disabled">W</button>
+        <button id="gender-x-regist-input" onclick="setGender('x')"  class="rounded login-gender-button-disabled">X</button>
+      </div>
+
+      <div class="login-button-container" style="margin-top:30px">
+        <button id="extra-content-button" style="width:100%" class="rounded btn btn-primary">WEITER</button>
+        <button id="back-regist-button" style="margin-top:10px;width:100%" class="rounded btn btn-danger">ABBRECHEN</button>
+      </div>
+    </br>
+    </br>
+    </br>
+    </div>
+  </div>
+
+  <div id="profile-container" class="text-center login-container" style="display:none">
+    <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100" viewBox="0 0 24 24" fill="white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/><path d="M0 0h24v24H0z" fill="none"/></svg>
+    <div id="extra-content" style="margin-top: 40px;padding-left: 40px;padding-right: 40px; margin-bottom: 70px; margin-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */margin-bottom: env(safe-area-inset-bottom); /* iOS 11.2 */">
+      <p id="email-info-input" >
+      </br>
+      <p>Du kannst zusätzliche Angaben zu deinem Profil machen, um zukünftig schneller Reservierungen abzuschließen.</p>
+      <form>
+        <div class="form-group">
+          <label for="firstname-regist-input">Name</label>
+          <input type="text" class="form-control input-login" id="firstname-info-input" aria-describedby="name-help" placeholder="Vorname">
+          <input type="text" class="form-control input-login" id="lastname-info-input" aria-describedby="name-help" placeholder="Nachname">
+        </div>
+        <div class="form-group">
+          <label for="tel-info-input">Telefonnummer</label>
+          <input type="number" class="form-control input-login" id="tel-info-input" aria-describedby="name-help" placeholder="Telefonnummer">
+        </div>
+        <div class="form-group">
+          <label for="birthday-info-input">Geburtstag</label>
+          <input type="date" class="form-control input-lgoin" id="birthday-info-input" value="1999-04-05" min="1900-01-01" max="2002-01-01">
+        </div>
+      </form>
+        <div class="login-button-container">
+          <button id="safe-extra-button" class="rounded login-button">SPEICHERN</button>
+          <button id="signout-button" class="rounded login-button">ABMELDEN</button>
+          <button id="back-regist-button" class="rounded login-button login-back-button back-button">ZURÜCK</button>
+        </div>
+      </br>
+      </br>
+      </br>
+    </div>
+  </div>
+
+  <div id="extra-content-container" class="text-center login-container" style="display:none">
+    <img class="animated infinite pulse" style="width:100px; margin-top:100px;" src="img/white_logo.png">
+    <div id="extra-content" style="margin-top: 40px;padding-left: 40px;padding-right: 40px; margin-bottom: 70px; margin-bottom: constant(safe-area-inset-bottom); /* iOS 11.0 */margin-bottom: env(safe-area-inset-bottom); /* iOS 11.2 */">
+      <p>Letzer Schritt! Jetzt fehlen nur noch deine Accountdaten.</p>
+      <form>
+        <!--<div class="form-group">
+          <label for="firstname-regist-input">Name</label>
+          <input type="text" class="form-control input-login" id="firstname-regist-input" aria-describedby="name-help" placeholder="Vorname">
+          <input type="text" class="form-control input-login" id="lastname-regist-input" aria-describedby="name-help" placeholder="Nachname">
+          <small id="name-help" class="form-text text-muted">Bitte Ihren richtigen Namen eingeben, ansonten kann kein Einlass gewährt werden.</small>
+        </div>-->
+        <div class="form-group">
+          <label for="email-regist-input">E-Mail</label>
+          <input type="email" class="form-control input-login" id="email-regist-input" placeholder="E-Mail Adresse">
+        </div>
+        <div class="form-group">
+          <label for="password-regist-input">Passwort</label>
+          <input type="password" class="form-control input-login" id="password-regist-input" placeholder="Passwort">
+        </div>
+      </form>
+
+      <div class="row" style="margin-top:30px">
+        <div class="col-4">
+          <button id="privacy-regist-input" onclick="setPermission('privacy')"  class="rounded login-gender-button-disabled">X</button>
+        </div>
+        <div class="col-6">
+          <p style="margin-left: 20px;text-align: left;align-items: center;margin-top: 0!important;margin-bottom: 0;">Ich stimme den Datenschutzbedinungen von Cobee und WirVsVirus zu.</p>
+        </div>
+      </div>
+
+      <div class="login-button-container" style="margin-top:30px">
+        <button id="regist-button" style="color:white;width:100%" class="rounded btn btn-success">ABSCHLIESSEN</button>
+        <button id="back-regist-button"  style="margin-top: 10px;width:100%"class="rounded btn btn-danger">ABBRECHEN</button>
+      </div>
+    </br>
+    </br>
+    </br>
+    </div>
+  </div>
+
+
+</body>
+<script>
+
+window.onload = function() {
+      initApp();
+};
+
+var firebaseConfig = {
+  apiKey: "AIzaSyCrry2X5T3pg7sokX9oJY5O3FKu5kbZxxI",
+  authDomain: "cobee-529e3.firebaseapp.com",
+  databaseURL: "https://cobee-529e3.firebaseio.com",
+  projectId: "cobee-529e3",
+  storageBucket: "cobee-529e3.appspot.com",
+  messagingSenderId: "655958016599",
+  appId: "1:655958016599:web:340ec45ce1d3dc60555912"
+};
+
+  // Initialize Firebase
+ firebase.initializeApp(firebaseConfig);
+ var database = firebase.database();
+ var isSignUp = false;
+ var registInformations = {};
+ registInformations.gender = "";
+ registInformations.privacy = false;
+ registInformations.newsletter = false;
+ changeBackgroudColor("purple");
+
+  $("#back-regist-button").click(function() {
+    $("#regist-content").hide();
+    $("#login-content").fadeIn();
+    //$("#login-container").css("background","#fff");
+    changeBackgroudColor("purple");
+  });
+
+  $("#regist-text").click(function() {
+    $("#regist-content").fadeIn();
+    $("#login-content").hide("slow");
+    //$("#login-container").css("background","#fff");
+    changeBackgroudColor("grey");
+  });
+
+  $(".back-button").click(function() {
+    closeProfilePage();
+  });
+
+  function setGender(gender){
+    let genderArray = ["w", "m", "x"];
+    genderArray.forEach(function(item){
+      $("#gender-"+ item + "-regist-input").removeClass("login-gender-button-active");
+      $("#gender-" + item +"-regist-input").addClass("login-gender-button-disabled");
+    });
+    $("#gender-" + gender +"-regist-input").removeClass("login-gender-button-disabled");
+    $("#gender-" + gender +"-regist-input").addClass("login-gender-button-active");
+    registInformations.gender = gender;
+  }
+
+  function closeProfilePage(){
+    changeBackgroudColor("black");
+    window.location.href = "index.html";
+  }
+
+  function changeBackgroudColor(color){
+    if (color == "black"){
+      anime({
+        targets: 'body',
+        background: '#000',
+        duration: 2000,
+      });
+    }else if(color == "grey"){
+      anime({
+        targets: '.login-container',
+        background: '#474e5d',
+        duration: 2000,
+      });
+      anime({
+        targets: 'body',
+        background: '#474e5d',
+        duration: 2000,
+      });
+    }else if(color == "purple"){
+      anime({
+        targets: '.login-container',
+        background: '#499ca3',
+        duration: 2000,
+      });
+      anime({
+        targets: 'body',
+        background: '#499ca3',
+        duration: 2000,
+      });
+    }
+  }
+
+
+  $("#regist-button").click(function(){
+    handleSignUp();
+  });
+
+  function handleSignUp() {
+  let email = $("#email-regist-input").val();
+  let password = $("#password-regist-input").val();
+  let birthday = $("#birthday-regist-input").val();
+
+  if (email.length < 4) {
+    alert('Bitte gebe eine E-Mail Adresse ein.', function(){}, "Sorry", "Erneut versuchen");
+    return;
+  }
+  if (password.length < 4) {
+    alert('Bitte gebe ein Passwort ein.', function(){}, "Sorry", "Erneut versuchen");
+    return;
+  }
+
+  if (!validateAge(birthday)){
+    return;
+  }
+
+  if(!registInformations.privacy){
+    alert("Sie müssen den Datenschutzbedinungen zustimmen.", function(){}, "Sorry", "Erneut versuchen");
+    return;
+  }
+
+  registInformations.birthday = birthday;
+
+  createAccount(email, password);
+
+  $("#login-container").hide();
+  $("#profile-container").hide();
+  $("#extra-address-content-container").hide();
+  $("#extra-content-container").fadeIn();
+}
+
+function createAccount(email, password){
+  firebase.auth().createUserWithEmailAndPassword(email, password).then(function(user) {
+    var userId = firebase.auth().currentUser.uid;
+    var email = firebase.auth().currentUser.email;
+   writeUserData(userId, email);
+
+  }).catch(function(error) {
+    // Handle Errors here.
+    var errorCode = error.code;
+    var errorMessage = error.message;
+    // [START_EXCLUDE]
+    if (errorCode == 'auth/weak-password') {
+      alert('Dein Passwort ist leider zu schwach.', function(){}, "Sorry", "Erneut versuchen");
+      //alert('Dein Passwort ist leider zu schwach.');
+    } else if(errorCode == 'auth/email-already-in-use'){
+      alert('Diese E-Mail Adresse wird bereits verwendet.', function(){}, "Sorry", "Erneut versuchen");
+      //alert('Diese E-Mail Adresse wird bereits verwendet.');
+    } else {
+      alert(errorMessage, function(){}, "Sorry", "Erneut versuchen");
+    }
+    console.log(error);
+    // [END_EXCLUDE]
+  });
+}
+
+
+function initApp() {
+     firebase.auth().onAuthStateChanged(function(user) {
+       if (user) {
+         window.location.href = "index.html";
+         // [END_EXCLUDE]
+       } else {
+         $("#login-container").fadeIn();
+         $("#profile-container").hide();
+         $("#extra-content-container").hide();
+       }
+     });
+   }
+
+   function loadUserInformation(){
+     var userId = firebase.auth().currentUser.uid;
+     var email = firebase.auth().currentUser.email;
+     firebase.database().ref('/users/' + userId).once('value').then(function(snapshot) {
+      $("#firstname-info-input").val((snapshot.val() && snapshot.val().firstname));
+      $("#lastname-info-input").val((snapshot.val() && snapshot.val().lastname));
+      $("#tel-info-input").val((snapshot.val() && snapshot.val().tel));
+      $("#birthday-info-input").val((snapshot.val() && snapshot.val().birthday));
+      $("#email-info-input").text(email);
+    });
+   }
+
+   $("#extra-content-button").click(function(){
+      let firstname = capitalizeFirstLetter($("#firstname-regist-input").val().trim());
+      let lastname = capitalizeFirstLetter($("#lastname-regist-input").val().trim());
+      let tel = $("#tel-regist-input").val();
+      $("#firstname-regist-input").val(firstname);
+      $("#lastname-regist-input").val(lastname);
+
+      if(!validateName(firstname) || !validateName(lastname) || !validateTel(tel) || !validateGender()){
+        return;
+      }
+
+      registInformations.firstname = firstname;
+      registInformations.lastname = lastname;
+      registInformations.tel = tel;
+
+      $("#login-container").hide();
+      $("#profile-container").hide();
+      $("#extra-content-container").fadeIn();
+      $("#extra-address-content-container").hide();
+
+   });
+
+
+
+   function setPermission(permission){
+     if(permission == "privacy"){
+       if ($("#privacy-regist-input").hasClass("login-gender-button-disabled")){
+         $("#privacy-regist-input").addClass("login-gender-button-active");
+         $("#privacy-regist-input").removeClass("login-gender-button-disabled");
+         registInformations.privacy = true;
+       }else{
+         $("#privacy-regist-input").removeClass("login-gender-button-active");
+         $("#privacy-regist-input").addClass("login-gender-button-disabled");
+         registInformations.privacy = false;
+       }
+     }
+   }
+
+   function writeUserData(userId, email) {
+     let gender = registInformations.gender;
+     let newsletter = registInformations.newsletter;
+     firebase.database().ref('users/' + userId).set({
+       email: email,
+       firstname: registInformations.firstname,
+       lastname: registInformations.lastname,
+       tel: registInformations.tel,
+       gender: gender
+     });
+     if (registInformations.firstname != 0){
+       alert('Danke '+ registInformations.firstname + ", dein Konto wurde erfolgreich angelegt.", function(){}, "Willkommen bei CoBee", "Weiter");
+     }else{
+       alert('Danke , dein Konto wurde erfolgreich angelegt.', function(){}, "Willkommen bei CoBee", "Weiter");
+     }
+      closeProfilePage();
+    }
+
+    $("#login-button").click(function(){
+      var email = $("#email-input").val().trim();
+      var password = $("#password-input").val().trim();
+      if (email.length < 4) {
+          alert('Bitte geben Sie eine E-Mail Adresse ein.', function(){}, "Sorry", "Erneut versuchen");
+
+          //alert('Bitte geben Sie eine E-Mail Adresse ein.');
+          return;
+      }
+      if (password.length < 4) {
+          alert('Bitte geben Sie ein Passwort ein.', function(){}, "Sorry", "Erneut versuchen");
+
+          return;
+      }
+        firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+          // Handle Errors here.
+          var errorCode = error.code;
+          var errorMessage = error.message;
+          // [START_EXCLUDE]
+          if (errorCode === 'auth/wrong-password') {
+            alert('Leider wurde ein falsches Passwort eingegeben.', function(){}, "Sorry", "Erneut versuchen");
+          } else if(errorCode === 'auth/user-not-found'){
+            alert('Leider existiert für diese E-Mail Adresse kein User.', function(){}, "Sorry", "Erneut versuchen");
+            //alert('Leider existiert für diese E-Mail Adresse kein User.');
+          } else {
+            alert(errorMessage, function(){}, "Sorry", "Erneut versuchen");
+          }
+        });
+    });
+
+
+    function capitalizeFirstLetter(string) {
+      string = string.toLowerCase();
+      return string.charAt(0).toUpperCase() + string.slice(1);
+    }
+
+    $(".cancel-button").click(function(){
+      $("#login-container").fadeIn();
+      $("#login-content").fadeIn();
+      $("#regist-content").hide();
+      $("#profile-container").hide();
+      $("#extra-content-container").hide();
+      $("#extra-address-content-container").hide();
+      changeBackgroudColor("purple");
+    });
+
+    function getAge(dateString) {
+    var today = new Date();
+    var birthDate = new Date(dateString);
+    var age = today.getFullYear() - birthDate.getFullYear();
+    var m = today.getMonth() - birthDate.getMonth();
+    if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    return age;
+  }
+
+  function validateAge(birthday){
+    let age = getAge(birthday);
+    if (age < 18){
+      alert('Du musst mindestens 18 Jahre alt sein.', function(){}, "Sorry", "Erneut versuchen");
+      //alert('Du musst mindestens 18 Jahre alt sein.');
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  function validateName(name){
+    var nameRegex = /^(?!-)[a-zA-ZäöüÄÖÜß]*[a-zA-ZäöüÄÖÜß]$/;
+    if(!nameRegex.test(name) || name == null || name <= 1  || name >= 25){
+      alert("Bitte einen gültigen Namen ohne Sonderzeichen oder Leerzeichen eingeben.", function(){}, "Sorry", "Erneut versuchen");
+
+      //alert("Bitte einen gültigen Namen ohne Sonderzeichen oder Leerzeichen eingeben. Doppelnamen müssen mit einem Bindestrich angegeben werden.");
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  function validateTel(tel){
+    if(tel.length <= 5 || tel.length >= 25){
+      alert("Bitte eine gültige Telefonnummer eingeben.", function(){}, "Sorry", "Erneut versuchen");
+
+      //alert("Bitte eine gültige Telefonnummer eingeben.");
+      return false;
+    }else{
+      return true;
+    }
+  }
+
+  function validateGender(){
+    if (registInformations.gender){
+      if(registInformations.gender == ""){
+        alert("Bitte wähle dein Geschlecht aus.", function(){}, "Sorry", "Erneut versuchen");
+        return false;
+      }
+      else if (registInformations.gender == "w" || registInformations.gender == "x" || registInformations.gender == "m") return true;
+    }else{
+      return false;
+    }
+  }
+</script>
+
+</html>
