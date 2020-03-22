@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta name="description" content="">
+  <meta name="author" content="">
+
+  <title>CoBee - Dashboard</title>
+
+  <!-- Custom fonts for this template-->
+  <link href="vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Nunito:200,200i,300,300i,400,400i,600,600i,700,700i,800,800i,900,900i" rel="stylesheet">
+
+  <!-- Custom styles for this template-->
+  <link href="css/sb-admin-2.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="/vendor/animate/animate.min.css">
+
+  <script src="https://www.gstatic.com/firebasejs/7.2.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/6.4.2/firebase-database.js"></script>
+  <script type="text/javascript" src="cordova.js"></script>
+
+
+</head>
+
+<body id="page-top" >
+
+  <div id="loader" style="    background: #499ca3;background: linear-gradient(51deg, #499ca3 0%, #3ebf95 100%);position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+    <img class="animated zoomIn" src="img/logoHack.png" style=" position: absolute; margin: auto;top: 0;left: 0;right: 0;bottom: 0;max-width:40%; animation-iteration-count: infinite;">
+  </div>
+
+  <div id="app" style="display:none">
+
+  <!-- Page Wrapper -->
+  <div id="wrapper">
+
+    <!-- Sidebar -->
+    <ul class="navbar-nav bg-gradient-primary sidebar sidebar-dark accordion" id="accordionSidebar" style="    background: #499ca3;background: linear-gradient(51deg, #499ca3 0%, #3ebf95 100%);">
+
+      <!-- Sidebar - Brand -->
+      <a class="sidebar-brand d-flex align-items-center justify-content-center" href="index.html">
+        <div class="sidebar-brand-icon rotate-n-15">
+          <img src="img/white_logo.png"style="max-width:70px">
+        </div>
+        <div class="sidebar-brand-text mx-3"></div>
+      </a>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider my-0">
+
+      <!-- Nav Item - Dashboard -->
+      <li id="home-nav" class="nav-item active">
+        <a class="nav-link" href="index.html">
+          <i class="fas fa-fw fa-tachometer-alt"></i>
+          <span>Overview</span></a>
+      </li>
+
+      <!-- Divider -->
+      <hr class="sidebar-divider">
+
+      <!-- Heading -->
+      <div class="sidebar-heading">
+        Optionen
+      </div>
+
+      <li id="event-nav" class="nav-item">
+        <a class="nav-link" onclick="openContainer('voucher')">
+          <i class="fas fa-fw fa-shopping-cart"></i>
+          <span>Bestellungen</span></a>
+      </li>
+      <li id="voucher-nav" class="nav-item">
+        <a class="nav-link" onclick="openContainer('event')">
+          <i class="fas fa-fw fa-archive"></i>
+          <span>Produkte</span></a>
+      </li>
+
+      <!-- Nav Item - Pages Collapse Menu -->
+
+      <!-- Divider -->
+      <hr class="sidebar-divider d-none d-md-block">
+
+      <!-- Sidebar Toggler (Sidebar) -->
+      <div class="text-center d-none d-md-inline">
+        <button class="rounded-circle border-0" id="sidebarToggle"></button>
+      </div>
+
+    </ul>
+    <!-- End of Sidebar -->
+
+    <!-- Content Wrapper -->
+    <div id="home-wrapper" class="d-flex flex-column">
+
+      <!-- Main Content -->
+      <div id="app-content">
+
+        <!-- Topbar -->
+        <nav class="navbar navbar-expand navbar-light bg-white topbar mb-4 static-top shadow">
+
+          <!-- Sidebar Toggle (Topbar) -->
+          <button id="sidebarToggleTop" class="btn btn-link d-md-none rounded-circle mr-3">
+            <i class="fa fa-bars"></i>
+          </button>
+
+
+          <!-- Topbar Navbar -->
+          <ul class="navbar-nav ml-auto">
+
+            <!-- Nav Item - Search Dropdown (Visible Only XS) -->
+            <li class="nav-item dropdown no-arrow d-sm-none">
+              <a class="nav-link dropdown-toggle" href="#" id="searchDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <i class="fas fa-search fa-fw"></i>
+              </a>
+              <!-- Dropdown - Messages -->
+              <div class="dropdown-menu dropdown-menu-right p-3 shadow animated--grow-in" aria-labelledby="searchDropdown">
+                <form class="form-inline mr-auto w-100 navbar-search">
+                  <div class="input-group">
+                    <input type="text" class="form-control bg-light border-0 small" placeholder="Search for..." aria-label="Search" aria-describedby="basic-addon2">
+                    <div class="input-group-append">
+                      <button class="btn btn-primary" type="button">
+                        <i class="fas fa-search fa-sm"></i>
+                      </button>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </li>
+
+
+            <div class="topbar-divider d-none d-sm-block"></div>
+
+            <!-- Nav Item - User Information -->
+            <li class="nav-item dropdown no-arrow">
+              <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                <span id="user-name" class="mr-2 d-none d-lg-inline text-gray-600 small"></span>
+
+              </a>
+              <!-- Dropdown - User Information -->
+              <div class="dropdown-menu dropdown-menu-right shadow animated--grow-in" aria-labelledby="userDropdown">
+                <a class="dropdown-item" id="logout-button">
+                  <i class="fas fa-sign-out-alt fa-sm fa-fw mr-2 text-gray-400"></i>
+                  Logout
+                </a>
+
+              </div>
+            </li>
+
+          </ul>
+
+        </nav>
+        <!-- End of Topbar -->
+
+        <!-- Begin Page Content -->
+        <div id="home-container" class="container-fluid" style="">
+
+          <!-- Page Heading -->
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Dashboard</h1>
+          </div>
+
+          <!-- Content Row -->
+          <div class="row">
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-primary shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-primary text-uppercase mb-1">Produkte Online</div>
+                      <div id="events-online-number" class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-archive fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-success shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-success text-uppercase mb-1">Neue Bestellungen</div>
+                      <div id="user-number-total" class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-cart-plus fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Earnings (Monthly) Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-info shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-info text-uppercase mb-1">Bestellungen Gesamt</div>
+                      <div id="guestlist-number" class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Pending Requests Card Example -->
+            <div class="col-xl-3 col-md-6 mb-4">
+              <div class="card border-left-warning shadow h-100 py-2">
+                <div class="card-body">
+                  <div class="row no-gutters align-items-center">
+                    <div class="col mr-2">
+                      <div class="text-xs font-weight-bold text-warning text-uppercase mb-1">Verpackte Bestellungen</div>
+                      <div id="table-number" class="h5 mb-0 font-weight-bold text-gray-800"></div>
+                    </div>
+                    <div class="col-auto">
+                      <i class="fas fa-truck-loading fa-2x text-gray-300"></i>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Content Row -->
+
+          <!-- Content Row -->
+          <div id="piechart-container" class="row">
+
+
+        </div>
+        <!-- /.container-fluid -->
+
+        <!-- Begin Page Content -->
+        <div id="voucher-container" class="container-fluid" style="">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Bestellungen</h1>
+          </div>
+
+          <div class="card shadow mb-4">
+            <div class="card-header py-3">
+              <h6 class="m-0 font-weight-bold text-primary">Alle Bestellungen</h6>
+            </div>
+            <div class="card-body">
+              <div id="orders-table" class="table-responsive">
+
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Tel</th>
+                      <th scope="col">Status</th>
+                      <th scope="col">Verpackt</th>
+                      <th scope="col">Abgeholt</th>
+                    </tr>
+                  </thead>
+                  <tbody id="table-body">
+
+                  </tbody>
+                </table>
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- Begin Page Content -->
+        <div id="event-container" class="container-fluid" style="">
+          <div class="d-sm-flex align-items-center justify-content-between mb-4">
+            <h1 class="h3 mb-0 text-gray-800">Angebotene Produkte</h1>
+          </div>
+          <div id="add-event-container" class="card shadow mb-4" style="display:none!important">
+            <!-- Card Header - Accordion -->
+            <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
+              <h6 class="m-0 font-weight-bold text-primary">Produkte hinzufügen</h6>
+            </a>
+            <!-- Card Content - Collapse -->
+            <div class="collapse show" id="collapseCardExample">
+              <div class="card-body">
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Bild</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Preis</th>
+                      <th scope="col">Hinzufügen</th>
+
+                    </tr>
+                  </thead>
+                  <tbody id="products-table">
+
+                  </tbody>
+                </table>
+
+
+                <div  style="margin-top:30px; color:white">
+                  <a id="event-safe-button" class="btn btn-success btn-icon-split">
+                      <span class="icon text-white-50">
+                        <i class="fas fa-check"></i>
+                      </span>
+                      <span class="text">Produkte speichern</span>
+                    </a>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        <!-- /.container-fluid -->
+
+
+        <!-- /.container-fluid -->
+
+      </div>
+      <!-- End of Main Content -->
+
+
+      <!-- Footer -->
+      <footer class="sticky-footer bg-white">
+        <div class="container my-auto">
+          <div class="copyright text-center my-auto">
+            <span>Copyright &copy; CoBee 2020 || WirVsVirus</span>
+          </div>
+        </div>
+      </footer>
+      <!-- End of Footer -->
+
+    </div>
+    <!-- End of Content Wrapper -->
+
+  </div>
+  <!-- End of Page Wrapper -->
+
+  <!-- Scroll to Top Button-->
+  <a class="scroll-to-top rounded" href="#page-top">
+    <i class="fas fa-angle-up"></i>
+  </a>
+
+  <!-- Logout Modal-->
+  <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="exampleModalLabel">Wirklich ausloggen?</h5>
+          <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">×</span>
+          </button>
+        </div>
+        <div class="modal-body">Drücke auf "Logout", wenn du dich sicher ausloggen willst.</div>
+        <div class="modal-footer">
+          <button class="btn btn-secondary" type="button" data-dismiss="modal">Abbrechen</button>
+          <a class="btn btn-primary">Logout</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  </div>
+
+  <div id="login-container" class="container" style="display: none">
+
+    <!-- Outer Row -->
+    <div class="row justify-content-center">
+
+      <div class="col-xl-10 col-lg-12 col-md-9">
+
+        <div class="card o-hidden border-0 shadow-lg my-5">
+          <div class="card-body p-0">
+            <!-- Nested Row within Card Body -->
+            <div class="row">
+              <div class="col-lg-6 d-none d-lg-block bg-login-image"></div>
+              <div class="col-lg-6">
+                <div class="p-5">
+                  <div class="text-center">
+                    <h1 class="h4 text-gray-900 mb-4">CoBee Dashboard</h1>
+                  </div>
+                  <form class="user">
+                    <div class="form-group">
+                      <input type="email" class="form-control form-control-user" id="inputEmail" aria-describedby="emailHelp" placeholder="E-Mail Adresse eingeben...">
+                    </div>
+                    <div class="form-group">
+                      <input type="password" class="form-control form-control-user" id="inputPassword" placeholder="Password">
+                    </div>
+                    <div class="form-group">
+                      <div class="custom-control custom-checkbox small">
+                        <input type="checkbox" class="custom-control-input" id="customCheck">
+                        <label class="custom-control-label" for="customCheck">Remember Me</label>
+                      </div>
+                    </div>
+                    <a style="color:white"id="login-button" style="margin-top:50px" class="btn btn-primary btn-user btn-block">
+                      Login
+                    </a>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- Bootstrap core JavaScript-->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+  <!-- Core plugin JavaScript-->
+  <script src="vendor/jquery-easing/jquery.easing.min.js"></script>
+
+  <!-- Custom scripts for all pages-->
+  <script src="js/sb-admin-2.min.js"></script>
+
+  <!-- Page level plugins -->
+  <script src="vendor/chart.js/Chart.min.js"></script>
+
+  <!-- Page level custom scripts -->
+  <script src="js/demo/chart-area-demo.js"></script>
+  <script src="js/demo/chart-pie-demo.js"></script>
+
+  <script>
+  // Your web app's Firebase configuration
+  var firebaseConfig = {
+   apiKey: "AIzaSyCrry2X5T3pg7sokX9oJY5O3FKu5kbZxxI",
+   authDomain: "cobee-529e3.firebaseapp.com",
+   databaseURL: "https://cobee-529e3.firebaseio.com",
+   projectId: "cobee-529e3",
+   storageBucket: "cobee-529e3.appspot.com",
+   messagingSenderId: "655958016599",
+   appId: "1:655958016599:web:340ec45ce1d3dc60555912"
+  };
+// Initialize Firebase
+firebase.initializeApp(firebaseConfig);
+var database = firebase.database();
+var userInformation;
+var isLoggedIn;
+var database;
+var orders;
+
+
+
+var pages = ["home", "event", "voucher", "login"];
+
+
+
+
+    function openContainer(container){
+      $([document.documentElement, document.body]).animate({
+        scrollTop: $("#" + container +"-container").offset().top
+      }, 2000);
+    }
+
+
+
+window.onload = function() {
+    initApp();
+  };
+
+  function initApp() {
+     }
+
+  firebase.auth().onAuthStateChanged(function(user) {
+          userInformation = {};
+          if (user) {
+            isLoggedIn = true;
+            $("#login-container").hide();
+            $("#app").fadeIn();
+            $("#event-table").html("");
+            $("#voucher-table").html("");
+            loadInformations();
+            firebase.database().ref('/users/' + firebase.auth().currentUser.uid).once('value').then(function(snapshot) {
+              userInformation = {
+                uid: firebase.auth().currentUser.uid,
+                email: firebase.auth().currentUser.email,
+                firstname: (snapshot.val() && snapshot.val().firstname),
+                lastname: (snapshot.val() && snapshot.val().lastname),
+                birthday: (snapshot.val() && snapshot.val().birthday),
+                tel: (snapshot.val() && snapshot.val().tel),
+                city: (snapshot.val() && snapshot.val().city),
+                street: (snapshot.val() && snapshot.val().street),
+                zip: (snapshot.val() && snapshot.val().zip),
+                state: (snapshot.val() && snapshot.val().state),
+              };
+             loadUserInformations();
+           });
+          } else {
+            isLoggedIn = false;
+            window.location = "/login.html";
+            $("#app").hide();
+            $("#login-container").fadeIn(1000);
+          }
+          //runLoader(false);
+        });
+
+function loadUserInformations(){
+  if(!(userInformation.state === "pharmacy")){
+    firebase.auth().signOut().then(function() {
+         pressedLoginButton();
+       }).catch(function(error) {
+         // An error happened.
+       });
+  }else if (userInformation.state === "pharmacy"){
+    $("#add-event-container").fadeIn();
+    $("#add-voucher-container").fadeIn();
+    $("#add-event-button").fadeIn();
+  }
+  $("#user-name").text(userInformation.firstname + " " + userInformation.lastname);
+}
+
+function loadInformations(){
+  firebase.database().ref('/products').once('value').then(function(snapshot) {
+  $("#products-table").html("");
+  database.products = snapshot.val();
+
+  database.products.forEach(function(product, index){
+    if(product.shopcategory == "pharmacy"){
+      $("#products-table").append("<tr id='item-"+ index + "'><th scope='row'>"+ index + "</th><td><img style='height:100px;'src='"+ product.img + "'></img></td><td>"+ product.name + "</td><td>"+ product.price + "€</td><td><button onclick='addToShop("+ index +", \"packed\")' class='btn btn-primary' type='button'><i class='fas fa-plus'></i></button></td></tr>");
+    }
+    firebase.database().ref('/shops/0').once('value').then(function(snapshot) {
+      database.shop = snapshot.val();
+      $("#events-online-number").text(database.shop.shopitems.length);
+      database.shop.shopitems.forEach(function(item){
+        $("#item-" + item.id).addClass("bg-success");
+      })
+    });
+  })
+
+  });
+
+  firebase.database().ref('/shops/0').once('value').then(function(snapshot) {
+    database.shop = snapshot.val();
+  });
+
+  firebase.database().ref('/shops/0/orders/').on('value', function(snapshot) {
+    let keys = Object.keys(snapshot.val());
+    orders = Object.values(snapshot.val());
+    $("#table-body").html("");
+    $("#guestlist-number").text(orders.length);
+    let sumPacked = 0;
+    let sumPicked = 0;
+    let sumNew = 0;
+    let sumPrice = 0;
+    orders.forEach(function(order, index){
+      orders[index].orderId = keys[index];
+      let items = "";
+      order.items.forEach(function(item){
+        items = items + "<p>- " + item.name + "</p>";
+        sumPrice = sumPrice + item.price;
+      });
+      let orderStatus;
+      if(order.state == "request"){
+        sumNew = sumNew + 1;
+        orderStatus = "class='bg-danger' style='color:white'";
+      }
+      else if(order.state == "packed"){
+        sumPacked = sumPacked + 1;
+        orderStatus = "class='bg-warning'";
+      }
+      else if(order.state == "picked"){
+        sumPicked = sumPicked + 1;
+        orderStatus = "class='bg-success' style='color:white'";
+      }
+      $("#table-number").text(sumPacked);
+      $("#user-number-total").text(sumNew);
+
+      $("#piechart-container").html("");
+      $("#piechart-container").append(getPieChartHTML("Bestellungen", "orders"));
+      createPieChart("orders" + "-piechart", ["Gepackt", "Abgeholt"], [sumPacked, sumPicked]);
+      $("#table-body").append("<tr "+orderStatus+"><th scope='row'>" + index +"</th><td>" + order.firstname + " "+ order.lastname +"</td><td>"+ order.tel + "</td><td> " + items + "</td><td><button onclick='updateOrder("+ index +", \"packed\")' class='btn btn-primary' type='button'><i class='fas fa-box'></i></button></td><td><button onclick='updateOrder("+ index +", \"picked\")' class='btn btn-primary' type='button'><i class='fas fa-people-carry'></i></i></button></td></tr>");
+    });
+  });
+
+  runLoader(false);
+}
+
+function getPieChartHTML(eventName, id){
+  var html = "<div class='col-6'><div class='card shadow mb-4'>"
+  + "<div class='card-header py-3 d-flex flex-row align-items-center justify-content-between'>"
+  + "<h6 class='m-0 font-weight-bold text-primary'>"+ eventName + "</h6><div class='dropdown no-arrow'>"
+  + "</div></div><div class='card-body'><div class='chart-pie pt-4 pb-2'><canvas id='" + id +"-piechart'></canvas></div><div class='mt-4 text-center small'>"
+  + "<span class='mr-2'><i class='fas fa-circle text-primary'></i> Gepackt</span><span class='mr-2'><i class='fas fa-circle text-success'></i> Abgeholt</span></div></div></div></div>"
+  + "<div class='col-lg-6 mb-4'><div class='card shadow mb-4'><div class='card-header py-3'><h6 class='m-0 font-weight-bold text-primary'>CoBee Dashboard</h6></div><div class='card-body'><p>Wilkommen beim CoBee Dashboard. Hier können die Shops neue Bestellungen sehen oder ihre Produkte verwalten.</p></div>";
+  return html;
+}
+
+
+function createPieChart(canvasId, labels, data){
+  var ctx = document.getElementById(canvasId);
+  var myPieChart = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: data,
+        backgroundColor: ['#4e73df', '#1cc88a', '#36b9cc'],
+        hoverBackgroundColor: ['#2e59d9', '#17a673', '#2c9faf'],
+        hoverBorderColor: "rgba(234, 236, 244, 1)",
+      }],
+    },
+    options: {
+      maintainAspectRatio: false,
+      tooltips: {
+        backgroundColor: "rgb(255,255,255)",
+        bodyFontColor: "#858796",
+        borderColor: '#dddfeb',
+        borderWidth: 1,
+        xPadding: 15,
+        yPadding: 15,
+        displayColors: false,
+        caretPadding: 10,
+      },
+      legend: {
+        display: false
+      },
+      cutoutPercentage: 80,
+    },
+  });
+}
+
+function updateOrder(id, state){
+  let updateOrder = orders[id];
+  updateOrder.state = state;
+  firebase.database().ref('shops/0/orders/' + updateOrder.orderId).set(updateOrder);
+}
+
+
+$("#logout-button").click(function(){
+  firebase.auth().signOut().then(function() {
+       pressedLoginButton();
+     }).catch(function(error) {
+       // An error happened.
+     });
+});
+
+function runLoader(shouldRun){
+ if(shouldRun){
+   $("#app").hide();
+   $("#loader").fadeIn();
+ }else{
+   $("#app").fadeIn();
+   $("#loader").hide();
+ }
+}
+
+$("#login-button").click(function(){
+  var email = $("#inputEmail").val();
+    var password = $("#inputPassword").val();
+    if (email.length < 4) {
+        navigator.notification.alert('Bitte geben Sie eine E-Mail Adresse ein.', function(){}, "Sorry", "Weiter");
+        return;
+    }
+    if (password.length < 4) {
+        navigator.notification.alert('Bitte geben Sie ein Passwort ein.', function(){}, "Sorry", "Weiter");
+        return;
+    }
+      firebase.auth().signInWithEmailAndPassword(email, password).catch(function(error) {
+        // Handle Errors here.
+        var errorCode = error.code;
+        var errorMessage = error.message;
+        // [START_EXCLUDE]
+        if (errorCode === 'auth/wrong-password') {
+          navigator.notification.alert('Leider wurde ein falsches Passwort eingegeben.', function(){}, "Sorry", "Erneut versuchen");
+        } else if(errorCode === 'auth/user-not-found'){
+          navigator.notification.alert('Leider existiert für diese E-Mail Adresse kein User.', function(){}, "Sorry", "Erneut versuchen");
+          alert('Leider existiert für diese E-Mail Adresse kein User.');
+        } else {
+          navigator.notification.alert(errorMessage, function(){}, "Sorry", "Erneut versuchen");
+        }
+      });
+});
+
+
+  </script>
+
+
+
+</body>
+
+</html>
