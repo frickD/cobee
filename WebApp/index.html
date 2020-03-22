@@ -93,9 +93,9 @@
       <div class="row">
         <div class="col">
           <div class="input-group">
-            <input type="text" class="form-control" placeholder="z.B. Was hilft gegen Kopfschmerzen?" aria-label="CoBee" aria-describedby="basic-addon2">
+            <input id="ask_input" type="text" class="form-control" placeholder="z.B. Was hilft gegen Kopfschmerzen?" aria-label="CoBee" aria-describedby="basic-addon2">
             <div class="input-group-append">
-              <button class="btn btn-cobee" type="button">GO</button>
+              <button id="send_text" class="btn btn-cobee" type="button">GO</button>
             </div>
           </div>
         </div>
@@ -498,5 +498,32 @@ var tabs = [{
         items: cart
       });
   }
+
+
+  $("#send_text").click(function() {
+    //$("#mrpat").attr("src", "img/mrpat.gif");
+    var question = $("#ask_input").val();
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://gateway-fra.watsonplatform.net/assistant/api/v2/assistants/97454bee-f5db-4b3d-bcd8-0e72eda5c5ab/sessions/cd3a39f7-9328-4f98-bd4c-9f823a75771f/message?version=2020-02-05",
+      "method": "POST",
+      "headers": {
+        "content-type": "application/json",
+        "authorization": "Basic YXBpa2V5Ok90QkJzNDdYVFVXeGcwSGlmT09wMEFDUnJMSWhQUlBEenVxUlFOYnR2V3dP",
+        "cache-control": "no-cache",
+        "postman-token": "c36e1b6c-4ff0-ed01-98cf-e7376f957690"
+      },
+      "processData": false,
+      "data": "{\"input\": {\"text\": \"" + question + "\"}}"
+    }
+
+    $.ajax(settings).done(function(response) {
+      console.log(response);
+      parseChatbotResponse(response);
+    });
+  });
+
+
 
 </script>
