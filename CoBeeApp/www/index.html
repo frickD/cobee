@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>CoBee</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1, width=device-width, height=device-height, viewport-fit=cover">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/all.css">
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.6.0/dist/leaflet.css"
+  integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
+  crossorigin=""/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.7.2/animate.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-database.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/7.10.0/firebase-auth.js"></script>
+  <script src="https://unpkg.com/leaflet@1.6.0/dist/leaflet.js"
+  integrity="sha512-gZwIG9x3wUXg2hdXF6+rVkLF/0Vi9U8D2Ntg4Ga5I5BZpVkVxlJWbSQtXPSiUTtC0TjtGOmxa1AJPuV0CPthew=="
+  crossorigin=""></script>
+  <script src="lib/anime/anime.min.js"></script>
+</head>
+<body>
+
+  <div id="loader" style="    background: #499ca3;background: linear-gradient(51deg, #499ca3 0%, #3ebf95 100%);position: absolute; top: 0; left: 0; height: 100%; width: 100%;">
+    <img class="animated zoomIn" src="img/logoHack.png" style=" position: absolute; margin: auto;top: 0;left: 0;right: 0;bottom: 0;max-width:40%; animation-iteration-count: infinite;">
+  </div>
+
+
+  <div id="app" style="display:none">
+  <nav class="navbar navbar-light fixed-top cobee-header">
+
+        <a class="navbar-brand" style="margin-right: 0;" href="index.html">
+        <img style="max-width:50px" src="img/white_logo.png">
+      </a>
+      <div id="zip-input" class="input-group" style="max-width:180px">
+        <input type="number" min="1" inputmode="numeric" pattern="[0-9]*" max="5" class="form-control" placeholder="PLZ eingeben" aria-label="PLZ eingeben" aria-describedby="basic-addon2">
+        <div class="input-group-append">
+          <button class="btn btn-outline-secondary" type="button"><i class="fas fa-search"></i></button>
+        </div>
+      </div>
+        <div id="login-button" onclick="displayTab('profile')" class="navbar-login-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" style="fill:white"><path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/><path d="M0 0h24v24H0z" fill="none"/></svg></div>
+    </nav>
+
+    <nav id="standard-footer" class="navbar-default fixed-bottom navbar-footer text-center" style="">
+      <div class="container drella-footer">
+        <a class="navbar-brand mx-auto" href="#">
+      <img id="info-button" onclick="displayTab('info')" class="navicon" alt="guest" src="img/icons/info.png" style="opacity:0.5">
+      <img id="home-button" onclick="displayTab('home')" class="navicon" alt="home" src="img/icons/home-in.png" style="">
+      <img id="camera-button" onclick="displayTab('camera')" class="navicon" alt="camera" src="img/icons/camera.png" style="opacity:0.5">
+    </a>
+      </div>
+    </nav>
+
+    <nav id="shop-cart-footer" class="navbar-default fixed-bottom navbar-footer text-center" style="display:none">
+      <div class="container drella-footer">
+        <a class="navbar-brand mx-auto" href="#">
+          <a onclick="closeShop()" style="color:white"class="btn btn-danger"><i class="far fa-window-close"></i></a>
+
+      <img style="margin-left:10px;width:30px" id="shop-item-1"  class="rounded-circle" alt="" src="" >
+      <img id="shop-item-2"  class="rounded-circle" src="" style="width:30px">
+      <img style="margin-right:10px;width:30px" id="shop-item-3" class="rounded-circle" src="" >
+      <a onclick="openModal()" style="color:white" id="cart-button" class="btn btn-success">0.00€ <i class="fas fa-cart-arrow-down"></i></a>
+    </a>
+      </div>
+    </nav>
+
+<div id="app-content" style="margin-top:120px">
+
+  <div id="home-content" style="">
+    <div class="color-background text-center" style="margin-top:120px">
+      <div style="width: 100%;overflow-x: auto;">
+        <div style="display:inline-flex; margin:10px">
+        <span onclick="displayShops('pharmacy')" id="pharmacy-tag" style="margin-right:10px" class="badge badge-light">Apotheken</span>
+        <span onclick="displayShops('supermarket')" id="supermarket-tag"style="margin-right:10px" class="badge badge-light">Supermärkte</span>
+        <span onclick="displayShops('gasstation')" id="gasstation-tag" style="margin-right:10px" class="badge badge-light">Tankstellen</span>
+        <span onclick="displayShops('restaurant')" id="restaurant-tag" style="margin-right:10px" class="badge badge-light">Restaurant</span>
+        <span onclick="displayShops('all')" id="all-tag" style="margin-right:10px" class="badge badge-light">Alle</span>
+      </div>
+      </div>
+    </div>
+
+    <div id="mapid" style="height:350px; position: sticky!important;border-bottom: 5px solid #499CA3;"></div>
+
+    <div id="cobee-container" class="container" style="">
+      <div class="row">
+        <div class="col-4">
+          <div id="cobee-icon">
+            <img  src="img/cobee/wink.gif" style="padding: 5px;width:100px;border-top: 5px solid #499CA3;"></img>
+          </div>
+        </div>
+        <div class="col-8">
+          <h5 style="margin-top:8px">
+            Stelle eine Frage an CoBee!
+          </h5>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col">
+          <div class="input-group">
+            <input id="ask_input" type="text" class="form-control" placeholder="z.B. Was hilft gegen Kopfschmerzen?" aria-label="CoBee" aria-describedby="basic-addon2">
+            <div class="input-group-append">
+              <button id="send_text" class="btn btn-cobee" type="button">GO</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="shops-container" class="container" style="display:none">
+
+    </div>
+
+  </div>
+
+  <div id="camera-content" style="display:none">
+    <div class="container" style="margin-top: 140px;">
+      <div class="card">
+        <div class="card-header color-background">
+          AI Medikamenten-Scan
+        </div>
+        <div class="card-body">
+          <div class="text-center">
+            <img  style="width:100px"src="img/cobee/camera.png"></img>
+          </div>
+          <h5 style="margin-top:30px"class="card-title">Scanne deine Medikamente.</h5>
+          <p class="card-text">Scanne mit CoBee deine Medikamente, um mehr Informationen wie beispielsweise Gebrauchsanweisung zubekommen. Dank AI kann CoBee dir verraten, was du gerade vor dir hast.</p>
+
+          <form onclick="openGallery()" enctype="multipart/form-data" class="text-center">
+            <label class="custom-file-upload">
+              <input id="file_input" name="files" type="file"/>
+              <i style="font-size:70px;" class="fas fa-camera"></i>
+            </label>
+          </form>
+
+          <a id="send_btn" onclick="sendIBMVR()" class="btn btn-cobee" style="display: none;width:100%;color:white">Analyse starten</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="profile-content" style="display:none">
+    <div class="container" style="margin-top: 140px;">
+      <div class="card">
+        <div class="card-header color-background">
+          Profil
+        </div>
+        <div class="card-body text-center">
+          <div class="text-center">
+            <img  style="width:100px"src="img/cobee/info.png"></img>
+          </div>
+          <h5 style="margin-top:30px"class="card-title" id="profile-name"></h5>
+          <h6 style=""class="card-title" id="profile-email"></h6>
+          <p class="card-text" id="profile-tel"></p>
+          <a onclick="signOut()" class="btn btn-danger" style="width:100%;margin-top: 30px;color:white">Abmelden</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="shop-content" style="display:none;">
+    <div class="container" style="margin-top: 140px;">
+      <div id="shop-header-card" class="card">
+
+      </div>
+      <div id="shop-items" class="row">
+
+      </div>
+    </div>
+  </div>
+
+  <div id="info-content" style="display:none">
+    <div class="container" style="margin-top: 140px;">
+      <div class="card">
+        <div class="card-header color-background">
+          Informationen zu CoBee.
+        </div>
+        <div class="card-body">
+          <div class="text-center">
+            <img  style="width:100px"src="img/cobee/info.png"></img>
+          </div>
+          <h5 style="margin-top:30px"class="card-title">Willkommen bei CoBee.</h5>
+          <p class="card-text">Auf dieser Seite findest du wichtige Informationen zu CoBee. Mit CoBee wollen wir den Virus weitereindämmen, die Kurve abflachen und dabei helfen den Shopbesuch, egal ob Apotheke oder Supermarkt, zu verbessern.</p>
+        </div>
+      </div>
+
+      <div id="accordion" style="margin-top:30px">
+
+        <div class="card">
+          <div class="card-header color-background" id="headingTwo">
+            <h5 class="mb-0">
+              <button  style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                Wozu CoBee?
+              </button>
+            </h5>
+          </div>
+          <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+              Mit CoBee wollen wir mit der Vereinfachung des Einkaufsprozesses die rasante Ausbreitung des Virus bekämpfen.<br>
+              Primär ermöglicht CoBee es euch bei euren umliegenden Apotheken, Supermärkten, Tankstellen und Restaurants Bestellungen aufzugeben, die dann von euch persönlich oder von einem CoBee Helfer abgeholt werden können.<br>
+              Wir wollen den Einkaufsprozess verkürzen und es gleichzeitig ermöglichen auch Ältern Menschen eine Möglichkeit geben benötigte Waren zu besorgen ohne sich in Gefahr zu begeben.<br><br>
+              Ein denkbarer Use Case wäre hier auch, dass Kinder und Enkelkinder, Waren für Ihre älteren Familienmitglieder bestellen können. <br>
+              Mit CoBee bieten wir auch kleineren Unternehmen die Möglichkeit sich eine Online Präsenz zu schaffen, um die eventuell gefährdete Lage zu sichern.<br><br>
+
+              Aktuell ist der Ort Gauting umgesetzt.<br>
+              Unternehmen können sich selbsttändig registriegen und Waren die verkauft werden auswählen oder gegebenenfalls anlegen. Somit erscheinen nach und nach immer mehr Einträge auf der Karte.<br><br>
+              CoBee versorgt euch auch mithilfe eines Chatbots mit den wichtigsten Informationen bzw. beantwortet eure Fragen (aktuell: Medikamente, Preise, nächsten Einkaufsmöglichkeiten | geplant: aktuelle Informationen zu wichtigen Nachrichten, Verhaltensweisen, aktuelle Umstände etc.)<br>
+              Außerdem ist es möglich euch bei der Medikamenten erkennung zu helfen, macht hierzu ein Foto von dem Medikament und Cobee liefert euch dank AI alle bekannten Daten zu diesem.
+
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header color-background" id="headingTwo">
+            <h5 class="mb-0">
+              <button style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                Wie kann ich CoBee Helfer werden?
+              </button>
+            </h5>
+          </div>
+          <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+            <div class="card-body">
+              Prinzipiell kann jeder der motiviert ist, Zeit hat und sich ehrenamtlich betätigen möchte, ein CoBee Helfer werden.<br>
+              Hierzu musst du das Anmelde Formular ausfüllen.<br>
+              Nach erfolgreicher Verifizierung kann es schon losgehen.<br><br>
+              Dein Account erhält eine Helfer Verifizierung mit der du dann Bestellungen in der App siehst.<br>Die Bestellungen können dann von dir für die Zustellung ausgewählt werden.<br>
+              Die beim Unternhemen hinterlegte Bestellung wird mit deinem Namen als Abholer makiert und ist somit zur Übermittlung bereit.<br>
+              In der App erfährst du durch die Bestellnummer wohin das Paket geliefert werden soll.
+
+            </div>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header color-background" id="headingThree">
+            <h5 class="mb-0">
+              <button style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                Technischer Hintergrund zu CoBee.
+              </button>
+            </h5>
+          </div>
+          <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+            <div class="card-body">
+              Anim pariatur cliche reprehenderit, enim eiusmod high life accusamus terry richardson ad squid. 3 wolf moon officia aute, non cupidatat skateboard dolor brunch. Food truck quinoa nesciunt laborum eiusmod. Brunch 3 wolf moon tempor, sunt aliqua put a bird on it squid single-origin coffee nulla assumenda shoreditch et. Nihil anim keffiyeh helvetica, craft beer labore wes anderson cred nesciunt sapiente ea proident. Ad vegan excepteur butcher vice lomo. Leggings occaecat craft beer farm-to-table, raw denim aesthetic synth nesciunt you probably haven't heard of them accusamus labore sustainable VHS.
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <div class="jumbotron text-center" style="margin-top: 50px;margin-bottom:0;background:#dcdcdc!important"></div>
+</div>
+
+
+<div id="shop-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bestellung verpacken lassen.</h5>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>Du hast folgende Sachen zum Verpacken bestellt:</p>
+        <div id="cart-items-modal">
+
+        </div>
+        <br>
+        <p>Wähle eine Bezahlmethode aus:</p>
+        <div class="">
+          <button type="button" class="btn btn-cobee"><i class="fab fa-apple-pay"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fab fa-paypal"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fas fa-toilet-paper"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fab fa-btc"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fab fa-cc-visa"></i></button>
+          <button type="button" class="btn btn-cobee"><i class="fab fa-cc-amex"></i></button>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button  onclick="createOrder()" type="button" class="btn btn-success">Verbindlich bestellen</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="order-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bestellung versendet</h5>
+      </div>
+      <div class="modal-body">
+        <p>Deine Bestellung wurde dem Shop übermittelt. Der Shop meldet sich per App oder telefonisch bei dir, sobald dein Paket fertig ist.</p>
+      </div>
+      <div class="modal-footer">
+        <button onclick="window.location.reload()" type="button" class="btn btn-cobee">Okay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="medicament-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">AI Medikamenten Suche</h5>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-header color-background">
+            Folgendes Medikament gefunden:
+          </div>
+          <div class="card-body">
+            <div class="text-center">
+              <img  id="medicament-img" style="width:100px"src="img/cobee/info.png"></img>
+            </div>
+            <h5 id="medicament-title"  style="margin-top:30px"class="card-title">Willkommen bei CoBee.</h5>
+            <p id="medicament-description"  class="card-text"></p>
+          </div>
+        </div>
+
+        <div id="accordion" style="margin-top:30px">
+
+          <div class="card">
+            <div class="card-header color-background" id="headingTwo">
+              <h5 class="mb-0">
+                <button  style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  Verwendung.
+                </button>
+              </h5>
+            </div>
+            <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div  id="medicament-usage" class="card-body">
+
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header color-background" id="headingTwo">
+              <h5 class="mb-0">
+                <button style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Effekt.
+                </button>
+              </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div id="medicament-effect" class="card-body">
+
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header color-background" id="headingThree">
+              <h5 class="mb-0">
+                <button style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  Inhaltsstoffe.
+                </button>
+              </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+              <div id="medicament-substances"  class="card-body">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="login-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog modal-dialog-centered" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">Bitte Anmelden!</h5>
+      </div>
+      <div class="modal-body">
+        <p>Um dies ausführen zu können, müssen Sie sich bitte zuerst anmelden.</p>
+      </div>
+      <div class="modal-footer">
+        <button onclick="window.location.href = 'login.html'" type="button" class="btn btn-cobee">Anmelden</button>
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Schließen</button>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+</body>
+</html>
+
+<script>
+window.onload = function() {
+      initApp();
+};
+var mymap;
+var shops;
+var layerGroup;
+var pharmacyIcon;
+var products;
+var cart = [];
+var cartSum = 0;
+var currentShop;
+var isLoggedIn = false;
+var userInformation;
+
+// Your web app's Firebase configuration
+ var firebaseConfig = {
+   apiKey: "AIzaSyCrry2X5T3pg7sokX9oJY5O3FKu5kbZxxI",
+   authDomain: "cobee-529e3.firebaseapp.com",
+   databaseURL: "https://cobee-529e3.firebaseio.com",
+   projectId: "cobee-529e3",
+   storageBucket: "cobee-529e3.appspot.com",
+   messagingSenderId: "655958016599",
+   appId: "1:655958016599:web:340ec45ce1d3dc60555912"
+ };
+ // Initialize Firebase
+ firebase.initializeApp(firebaseConfig);
+ var database = firebase.database();
+
+ firebase.database().ref('/products/').on('value', function(snapshot) {
+    products = snapshot.val();
+ });
+
+
+
+ loadMap();
+
+ function loadMap(){
+   mymap = L.map('mapid').setView([48.06649398803711, 11.380158424377441], 13);
+   var tile_layer = L.tileLayer('https://api.mapbox.com/styles/v1/{id}/tiles/{z}/{x}/{y}?access_token=pk.eyJ1IjoiZGZyaWNrIiwiYSI6ImNrNzM1dmU0NDA5Mmgza252ZnVlNTBhbHQifQ.f9nZLlYYqR8PCjuXPiyn2g', {
+       maxZoom: 20,
+       id: 'mapbox/streets-v11',
+       tileSize: 512,
+       zoomOffset: -1,
+       retina: '@2x',
+       detectRetina: true,
+       accessToken: 'pk.eyJ1IjoiZGZyaWNrIiwiYSI6ImNrNzM1dmU0NDA5Mmgza252ZnVlNTBhbHQifQ.f9nZLlYYqR8PCjuXPiyn2g'
+     });
+   tile_layer.addTo(mymap);
+   layerGroup = L.featureGroup().addTo(mymap);
+   tile_layer.on("load",function() {
+
+   });
+
+  pharmacyIcon = L.icon({
+    iconUrl: 'img/cobee/pin_pharmacy.png',
+    iconSize:     [30, 30], // size of the icon
+    iconAnchor:   [0, 0], // point of the icon which will correspond to marker's location
+    popupAnchor:  [10, 0] // point from which the popup should open relative to the iconAnchor
+  });
+
+
+   firebase.database().ref('/shops/').on('value', function(snapshot) {
+      shops = snapshot.val();
+      displayShops("all");
+      /*
+      shops.forEach(function(shop){
+        if(shop.category == "pharmacy"){
+          var marker = L.marker([shop.cordinate.lat, shop.cordinate.long], {icon: pharmacyIcon}).addTo(layerGroup);
+        }else{
+          var marker = L.marker([shop.cordinate.lat, shop.cordinate.long]).addTo(layerGroup);
+        }
+        marker.bindPopup("<b>" + shop.name + "</b><br>"+ shop.adresse+"</b><br><button onclick='showShopItems(\""+ shop.id +"\")' class='btn btn-cobee' type='button'><i class='fas fa-cart-plus'></i></button>");
+        mymap.fitBounds(layerGroup.getBounds());
+      });*/
+   });
+
+ }
+
+
+
+
+
+function initApp() {
+  firebase.auth().onAuthStateChanged(function(user) {
+    if (user) {
+      isLoggedIn = true;
+      firebase.database().ref('/users/' + firebase.auth().currentUser.uid).once('value').then(function(snapshot) {
+              userInformation = {
+                uid: firebase.auth().currentUser.uid,
+                email: firebase.auth().currentUser.email,
+                firstname: (snapshot.val() && snapshot.val().firstname),
+                lastname: (snapshot.val() && snapshot.val().lastname),
+                tel: (snapshot.val() && snapshot.val().tel)
+              };
+             loadUserInformations();
+           });
+    } else {
+      isLoggedIn = false;
+      $("#profile-container").hide();
+    }
+  });
+}
+
+function loadUserInformations(){
+    $("#profile-name").text(userInformation.firstname + " " + userInformation.lastname);
+    $("#profile-email").text(userInformation.email);
+    $("#profile-tel").text("Tel.: " + userInformation.tel);
+}
+
+var tabs = [{
+    id: 'info',
+    isLogin: false,
+    isHighlight: true
+  }, {
+    id: 'home',
+    isLogin: false,
+    isHighlight: true
+  },{
+    id: 'camera',
+    isLogin: false,
+    isHighlight: true
+  },{
+    id: 'shop',
+    isLogin: false,
+    isHighlight: false
+  },{
+    id: 'profile',
+    isLogin: true,
+    isHighlight: false
+  }];
+
+  function displayTab(tab) {
+    $("#zip-input").hide();
+    tabs.forEach(function(element) {
+      if (element.id == tab) {
+        if((element.isLogin && (isLoggedIn==false))){
+          $("#home-content").fadeIn();
+          $("#login-modal").modal('show');
+          displayShops("all");
+          $("#zip-input").fadeIn();
+        }else{
+          $("#login-modal").modal('hide');
+          if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 1);
+          $("#" + element.id + "-content").fadeIn();
+          if(tab == "home"){
+            displayShops("all");
+            $("#zip-input").fadeIn();
+          }
+        }
+      } else {
+        if(element.isHighlight)$("#" + element.id + "-button").fadeTo("slow", 0.5);
+        $("#" + element.id + "-content").hide();
+      }
+    });
+  }
+
+
+  function displayShops(category){
+    //runLoader(true);
+    let shopTags = ["pharmacy", "supermarket", "gasstation", "restaurant", "all"];
+    $("#shops-container").html("");
+    layerGroup.clearLayers();
+    shopTags.forEach(function(shop){
+      $("#" + shop + "-tag").fadeTo("fast", 0.5);
+    });
+    shops.forEach(function(shop){
+      if(shop.category == category || category == "all"){
+        $("#shops-container").append("<div class='card' style='margin-top:10px;'><div class='card-header color-background'>" + shop.adresse + ", " + shop.ort + "</div><div class='card-body'><div class='row'><div class='col-4'><img  style='width:100px; padding:10px'src='" + shop.bild +"'></img></div><div class='col-8'><h5 class='card-title'>" + shop.name + ".</h5><p class='card-text'>Tel.: " + shop.telefon +"</p></div></div><a onclick='showShopItems(\""+ shop.id +"\")' href='#' class='btn btn-cobee' style='width:100%'>Hier bestellen</a></div></div>");
+        if(shop.category == "pharmacy"){
+          var marker = L.marker([shop.cordinate.lat, shop.cordinate.long], {icon: pharmacyIcon}).addTo(layerGroup);
+        }else{
+          var marker = L.marker([shop.cordinate.lat, shop.cordinate.long]).addTo(layerGroup);
+        }
+        marker.bindPopup("<b>" + shop.name + "</b><br>"+ shop.adresse +"</b><br><button onclick='showShopItems(\""+ shop.id +"\")' class='btn btn-cobee' type='button'><i class='fas fa-cart-plus'></i></button>");
+        setTimeout(function() {
+          mymap.invalidateSize();
+          mymap.fitBounds(layerGroup.getBounds());
+          runLoader(false);
+        }, 200);
+        setTimeout(() => {
+          anime({
+            targets: '#cobee-icon',
+            translateY: -50
+          });
+        }, 1000);
+      }
+    });
+    if(category == "all"){
+      $("#shops-container").hide();
+      $("#cobee-container").fadeIn();
+    }else{
+      $("#shops-container").fadeIn();
+      $("#cobee-container").hide();
+    }
+    $("#" + category + "-tag").fadeTo("fast", 1);
+  }
+
+  function closeShop(){
+    displayTab("home");
+    $("#shop-cart-footer").hide();
+    $("#standard-footer").fadeIn();
+  }
+
+  function showShopItems(shopId){
+    currentShop = shopId;
+    $("#shop-item-3").attr("src","");
+    $("#shop-item-2").attr("src","");
+    $("#shop-item-1").attr("src","");
+    cartSum = 0.00;
+    $("#cart-button").text(cartSum+ "€ bestellen");
+    cart = [];
+    displayTab("shop");
+    let shop = shops[shopId];
+    $("#shop-header-card").html("");
+    $("#shop-header-card").append("<div class='card-header color-background'>"+ shop.adresse +", "+ shop.ort + "</div><div class='card-body'><div class='text-center'><img  style='width:100px; padding:10px'src='"+ shop.bild + "'></img></div><h5 style='margin-top:30px'class='card-title'>" + shop.name +".</h5><p>Auslastung:</p><div class='progress' style='height: 20px;'><div class='progress-bar color-background' role='progressbar' style='width: 25%;' aria-valuenow='25' aria-valuemin='0' aria-valuemax='100'></div></div><br><p>Tel.: "+ shop.telefon + "</p></div>");
+    $("#shop-cart-footer").fadeIn();
+    $("#standard-footer").hide();
+    $("#shop-items").html("");
+    if(shop.shopitems){
+      shop.shopitems.forEach(function(item){
+        let product = products[item.id];
+        $("#shop-items").append("<div class='col-6' style='margin-top:30px'><div class='card'><img class='card-img-top' style='width:150px; padding:10px' src='" + product.img +"' alt='Card image cap'><div class='card-body'><h6 class='card-title'>"+ product.name +"</h6><p class='card-text'>"+ product.size +"</p><a style='color:white' onclick='addToCart(\"" + product.id +"\")' class='btn btn-cobee'>"+ product.price +"€ <i class='fas fa-cart-plus'></i></a></div></div></div>");
+      });
+    }
+  }
+
+  function addToCart(productId){
+    let product = products[productId];
+    cartSum = cartSum + parseFloat(product.price);
+    let cartSumString = cartSum.toFixed(2);
+    cart.push(product);
+    if(cart.length > 2){
+      $("#shop-item-3").attr("src",cart[cart.length - 3].img);
+      $("#shop-item-2").attr("src",cart[cart.length - 2].img);
+      $("#shop-item-1").attr("src",cart[cart.length -1].img);
+    }else if(cart.length > 1){
+      $("#shop-item-2").attr("src",cart[cart.length - 2].img);
+      $("#shop-item-1").attr("src",cart[cart.length - 1].img);
+    }else if(cart.length > 0){
+      $("#shop-item-1").attr("src",cart[cart.length - 1].img);
+    }
+    $("#cart-button").text(cartSumString+ "€");
+  }
+
+  function openModal(){
+    $("#cart-items-modal").html("");
+    if(cart.length > 0){
+      cart.forEach(function(item){
+        $("#cart-items-modal").append("<p>- " + item.name +"</p>");
+      });
+    }else{
+      $("#cart-items-modal").append("<p>Du hast noch nichts im Warenkorb.</p>");
+    }
+
+    $('#shop-modal').modal('show');
+
+  }
+
+  function createOrder(){
+    $('#shop-modal').modal('hide');
+    if(isLoggedIn){
+      $('#order-modal').modal('show');
+
+      firebase.database().ref("shops/" + currentShop+ "/orders/" + userInformation.uid).set({
+        uid: userInformation.uid,
+        state: "request",
+        firstname: userInformation.firstname,
+        lastname: userInformation.lastname,
+        tel: userInformation.tel,
+        items: cart
+      });
+    }else{
+      $('#login-modal').modal('show');
+    }
+  }
+
+
+  $("#send_text").click(function() {
+    var question = $("#ask_input").val();
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://gateway-fra.watsonplatform.net/assistant/api/v2/assistants/97454bee-f5db-4b3d-bcd8-0e72eda5c5ab/sessions?version=2020-02-05",
+      "method": "POST",
+      "headers": {
+        "Authorization": "Basic YXBpa2V5Ok90QkJzNDdYVFVXeGcwSGlmT09wMEFDUnJMSWhQUlBEenVxUlFOYnR2V3dP",
+      }
+    }
+
+    $.ajax(settings).done(function (response) {
+      let url = "https://gateway-fra.watsonplatform.net/assistant/api/v2/assistants/97454bee-f5db-4b3d-bcd8-0e72eda5c5ab/sessions/" + response.session_id +"/message?version=2020-02-05"
+      var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": url,
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "authorization": "Basic YXBpa2V5Ok90QkJzNDdYVFVXeGcwSGlmT09wMEFDUnJMSWhQUlBEenVxUlFOYnR2V3dP",
+
+        },
+        "processData": false,
+        "data": "{\"input\": {\"text\": \"" + question + "\"}}"
+      }
+
+      $.ajax(settings).done(function(response) {
+        parseChatbotResponse(response);
+        console.log(response);
+      });
+    });
+    //$("#mrpat").attr("src", "img/mrpat.gif");
+  });
+
+  function parseChatbotResponse(response) {
+    var intent = response.output.intents[0].intent;
+    var entity;
+    if(response.output.entities[0].value) entity =response.output.entities[0].value;
+    if(intent === "ShopSearch" && entity === "Apotheken"){
+      displayShops("pharmacy");
+    }else if(intent === "ShopSearch" && entity === "Restaurant"){
+      displayShops("restaurant");
+    }else if(intent === "ShopSearch" && entity === "Supermärkte"){
+      displayShops("supermarket");
+    }else if(intent === "ShopSearch" && entity === "Tankstellen"){
+      displayShops("gasstation");
+    }else if(intent === "MedicamentSearch" && entity == "Augenschmerzen"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Durchfall"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Fieber"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Gliederschmerzen"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Grippe"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Herz"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Kopfschmerzen"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Kreislauf"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Ohrenschmerzen"){
+      //;
+    }else if(intent === "Price" && entity == "Augentropfen"){
+      //;
+    }else if(intent === "Price" && entity == "Durchfallmittel"){
+      //;
+    }else if(intent === "Price" && entity == "Ibuprofen"){
+      //;
+    }else if(intent === "Price" && entity == "Nasenspray"){
+      //;
+    }else {
+      alert("Sorry, I haven't unterstand you. Please try again.");
+
+    }
+  }
+
+  function signOut(){
+    firebase.auth().signOut().then(function() {
+       alert("Sie wurden ausgeloggt");
+       window.location.reload();
+     }).catch(function(error) {
+       // An error happened.
+     });
+  }
+
+  function requestAPI(form) {
+    runLoader(true);
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://gateway.watsonplatform.net/visual-recognition/api/v3/classify?version=2018-03-19",
+      "method": "POST",
+      "headers": {
+        "authorization": "Basic YXBpa2V5OktndVlSYll0Y3ZvdUVaSEwwdVNDMzl1Rl9aS2lBS2pPd0tVV21rNUNYZ08z"
+      },
+      "processData": false,
+      "contentType": false,
+      "mimeType": "multipart/form-data",
+      "data": form
+    }
+    $.ajax(settings).done(function(response) {
+      runLoader(false);
+      var res = JSON.parse(response);
+      console.log(res);
+      if (typeof res.images[0].classifiers[0].classes[0].class != "undefined") {
+        var product = res.images[0].classifiers[0].classes[0].class;
+        if(product=="Dobendan_Pill"){
+          $("#medicament-img").attr("src",products[12].img);
+          $("#medicament-title").text(products[12].name);
+          $("#medicament-description").text(products[12].fieldofuse);
+          $("#medicament-usage").text(products[12].dosage);
+          $("#medicament-substances").text(products[12].activesubstances);
+          $("#medicament-effect").text(products[12].contraindications);
+          $("#medicament-modal").modal("show");
+        }
+      }
+    }).fail(function(e) {
+      runLoader(false);
+    });
+  }
+
+    function openGallery(){
+      $("#send_btn").fadeIn(1000);
+    };
+
+    function sendIBMVR(){
+      //$("#app").hide();
+      //$("#preloader").fadeIn();
+      var form = new FormData();
+      form.append('images_file', $('input[type=file]')[0].files[0]);
+      form.append("classifier_ids", "DefaultCustomModel_933387654");
+      requestAPI(form);
+    };
+
+    function runLoader(shouldRun){
+     if(shouldRun){
+       $("#app").hide();
+       $("#loader").fadeIn();
+     }else{
+       $("#app").fadeIn();
+       $("#loader").hide();
+     }
+    }
+
+
+</script>
