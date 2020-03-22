@@ -68,14 +68,14 @@
       </div>
 
       <li id="event-nav" class="nav-item">
-        <a class="nav-link" onclick="openContainer('event')">
-          <i class="fas fa-fw fa-calendar"></i>
-          <span>Produkte</span></a>
+        <a class="nav-link" onclick="openContainer('voucher')">
+          <i class="fas fa-fw fa-shopping-cart"></i>
+          <span>Bestellungen</span></a>
       </li>
       <li id="voucher-nav" class="nav-item">
-        <a class="nav-link" onclick="openContainer('voucher')">
-          <i class="fas fa-fw fa-ticket-alt"></i>
-          <span>Gutscheine</span></a>
+        <a class="nav-link" onclick="openContainer('event')">
+          <i class="fas fa-fw fa-archive"></i>
+          <span>Produkte</span></a>
       </li>
 
       <!-- Nav Item - Pages Collapse Menu -->
@@ -174,7 +174,7 @@
                       <div id="events-online-number" class="h5 mb-0 font-weight-bold text-gray-800"></div>
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-calendar fa-2x text-gray-300"></i>
+                      <i class="fas fa-archive fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -191,7 +191,7 @@
                       <div id="user-number-total" class="h5 mb-0 font-weight-bold text-gray-800"></div>
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-user fa-2x text-gray-300"></i>
+                      <i class="fas fa-cart-plus fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -208,7 +208,7 @@
                       <div id="guestlist-number" class="h5 mb-0 font-weight-bold text-gray-800"></div>
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-book-medical fa-2x text-gray-300"></i>
+                      <i class="fas fa-shopping-cart fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -225,7 +225,7 @@
                       <div id="table-number" class="h5 mb-0 font-weight-bold text-gray-800"></div>
                     </div>
                     <div class="col-auto">
-                      <i class="fas fa-comments fa-2x text-gray-300"></i>
+                      <i class="fas fa-truck-loading fa-2x text-gray-300"></i>
                     </div>
                   </div>
                 </div>
@@ -285,81 +285,36 @@
           <div id="add-event-container" class="card shadow mb-4" style="display:none!important">
             <!-- Card Header - Accordion -->
             <a href="#collapseCardExample" class="d-block card-header py-3" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="collapseCardExample">
-              <h6 class="m-0 font-weight-bold text-primary">Veranstaltung hinzufügen</h6>
+              <h6 class="m-0 font-weight-bold text-primary">Produkte hinzufügen</h6>
             </a>
             <!-- Card Content - Collapse -->
             <div class="collapse show" id="collapseCardExample">
               <div class="card-body">
-                <!--
-                <form>
-                  <div class="form-row">
-                    <div class="form-group col-md-12">
-                      <label for="inputEmail4">Facebook-Link</label>
-                      <input type="text" class="form-control" id="inputEmail4" placeholder="https://facebook/callmedrella/veranstaltungen">
-                      <a id="fb-button" href="#" class="btn btn-primary btn-icon-split btn-sm" style="margin-top: 32px;height:37px;width:215px;">
-                        <span class="icon text-white-50" style="padding-top:7px;color:white !IMPORTANT;">
-                          <i class="fab fa-facebook-f"></i>
-                        </span>
-                        <span class="text" style="padding-top: 7px;"><b>Aus Facebook importieren</b></span>
-                      </a>
-                    </div>
-                  </div>
-                </form>-->
-                <strong>Veranstaltung einpflegen</strong>
-                <form>
-                  <div class="form-row">
-                    <div class="form-group col-md-3">
-                      <label for="event-date">Datum</label>
-                      <input type="date" class="form-control" value="2019-10-28" id="event-date" placeholder="Datum">
-                    </div>
-                    <div class="form-group col-md-3">
-                      <label for="event-name">Veranstaltung</label>
-                      <input type="text" class="form-control" id="event-name" placeholder="Veranstaltungsname">
-                    </div>
-                    <div class="form-group col-md-6">
-                      <label for="event-description">Beschreibung</label>
-                      <input type="text" class="form-control" id="event-description" placeholder="Beschreibung">
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="form-group col-md-4">
-                      <label for="event-guestlist">Gästeliste</label>
-                      <select class="form-control" id="event-guestlist">
-                        <option>Ja</option>
-                        <option>Nein</option>
-                      </select>
-                    </div>
-                    <div class="form-group col-md-8">
-                      <label for="event-img">Bild-Link</label>
-                      <input type="text" class="form-control" id="event-img" placeholder="Bild-Link">
-                    </div>
-                  </div>
-                  <div class="form-row">
-                    <div class="form-group col-md-12">
-                      <label for="event-comment">Kommentar</label>
-                      <input type="text" class="form-control" id="event-comment" cols="3" placeholder="Kommentar zum Event (intern)">
-                    </div>
-                  </div>
-                </form>
+                <table class="table">
+                  <thead>
+                    <tr>
+                      <th scope="col">#</th>
+                      <th scope="col">Bild</th>
+                      <th scope="col">Name</th>
+                      <th scope="col">Preis</th>
+                      <th scope="col">Hinzufügen</th>
+
+                    </tr>
+                  </thead>
+                  <tbody id="products-table">
+
+                  </tbody>
+                </table>
+
+
                 <div  style="margin-top:30px; color:white">
                   <a id="event-safe-button" class="btn btn-success btn-icon-split">
                       <span class="icon text-white-50">
                         <i class="fas fa-check"></i>
                       </span>
-                      <span class="text">Veranstaltung speichern</span>
+                      <span class="text">Produkte speichern</span>
                     </a>
                 </div>
-              </div>
-            </div>
-          </div>
-          <!-- DataTales Example -->
-          <div class="card shadow mb-4">
-            <div class="card-header py-3">
-              <h6 class="m-0 font-weight-bold text-primary">Aktuelle Veranstaltungen</h6>
-            </div>
-            <div class="card-body">
-              <div id="event-table" class="table-responsive">
-
               </div>
             </div>
           </div>
@@ -546,7 +501,7 @@ window.onload = function() {
            });
           } else {
             isLoggedIn = false;
-            //window.location = "/login.html";
+            window.location = "/login.html";
             $("#app").hide();
             $("#login-container").fadeIn(1000);
           }
@@ -570,29 +525,36 @@ function loadUserInformations(){
 
 function loadInformations(){
   firebase.database().ref('/products').once('value').then(function(snapshot) {
+  $("#products-table").html("");
   database.products = snapshot.val();
-  let products = Object.keys(database.products).length;
-  $("#user-number-total").text(products);
+
+  database.products.forEach(function(product, index){
+    if(product.shopcategory == "pharmacy"){
+      $("#products-table").append("<tr id='item-"+ index + "'><th scope='row'>"+ index + "</th><td><img style='height:100px;'src='"+ product.img + "'></img></td><td>"+ product.name + "</td><td>"+ product.price + "€</td><td><button onclick='addToShop("+ index +", \"packed\")' class='btn btn-primary' type='button'><i class='fas fa-plus'></i></button></td></tr>");
+    }
+    firebase.database().ref('/shops/0').once('value').then(function(snapshot) {
+      database.shop = snapshot.val();
+      $("#events-online-number").text(database.shop.shopitems.length);
+      database.shop.shopitems.forEach(function(item){
+        $("#item-" + item.id).addClass("bg-success");
+      })
+    });
+  })
+
   });
 
   firebase.database().ref('/shops/0').once('value').then(function(snapshot) {
     database.shop = snapshot.val();
-    $("#piechart-container").html("");
-    $("#piechart-container").append(getPieChartHTML("Bestellungen", "orders"));
-    createPieChart("orders" + "-piechart", ["Gepackt", "Abgeholt"], [2, 2]);
-
-
   });
 
   firebase.database().ref('/shops/0/orders/').on('value', function(snapshot) {
-
-    $("#table-number").text(orders.length);
-    let sumPacked = 0;
-    let sumNew = 0;
-
     let keys = Object.keys(snapshot.val());
     orders = Object.values(snapshot.val());
     $("#table-body").html("");
+    $("#guestlist-number").text(orders.length);
+    let sumPacked = 0;
+    let sumPicked = 0;
+    let sumNew = 0;
     let sumPrice = 0;
     orders.forEach(function(order, index){
       orders[index].orderId = keys[index];
@@ -611,9 +573,15 @@ function loadInformations(){
         orderStatus = "class='bg-warning'";
       }
       else if(order.state == "picked"){
+        sumPicked = sumPicked + 1;
         orderStatus = "class='bg-success' style='color:white'";
       }
-      $("#guestlist-number").text(sumPacked);
+      $("#table-number").text(sumPacked);
+      $("#user-number-total").text(sumNew);
+
+      $("#piechart-container").html("");
+      $("#piechart-container").append(getPieChartHTML("Bestellungen", "orders"));
+      createPieChart("orders" + "-piechart", ["Gepackt", "Abgeholt"], [sumPacked, sumPicked]);
       $("#table-body").append("<tr "+orderStatus+"><th scope='row'>" + index +"</th><td>" + order.firstname + " "+ order.lastname +"</td><td>"+ order.tel + "</td><td> " + items + "</td><td><button onclick='updateOrder("+ index +", \"packed\")' class='btn btn-primary' type='button'><i class='fas fa-box'></i></button></td><td><button onclick='updateOrder("+ index +", \"picked\")' class='btn btn-primary' type='button'><i class='fas fa-people-carry'></i></i></button></td></tr>");
     });
   });
@@ -671,67 +639,6 @@ function updateOrder(id, state){
   firebase.database().ref('shops/0/orders/' + updateOrder.orderId).set(updateOrder);
 }
 
-
-
-$("#event-safe-button").click(function(){
-  let date = $("#event-date").val();
-  let name = $("#event-name").val();
-  let description = $("#event-description").val();
-  let isGuestlist = "true";
-  if ($("#event-guestlist").val() == "Nein") isGuestlist = "false";
-  let img = $("#event-img").val();
-  let comment = $("#event-comment").val();
-
-  var newEvent={
-  date: date,
-  description : description,
-  img: img,
-  isGuestlistAllowed : isGuestlist,
-  name : name,
-  comment: comment
-  }
-
-  var myRef = firebase.database().ref("/events/").push(newEvent);
-  var key = myRef.key;
-  firebase.database().ref("/events/" + key + "/id").set(key);
-  navigator.notification.alert("Veranstaltung wurde erfolgreich angelegt!", function(){}, name, "Weiter");
-  window.location.reload();
-});
-
-$("#voucher-safe-button").click(function(){
-  let shortDescription = $("#voucher-shortDescription-input").val();
-  let name = $("#voucher-name-input").val();
-  let description = $("#voucher-description-input").val();
-  let url = "img/" + $("#voucher-image-input").val();
-
-  var newPostKey = firebase.database().ref().child('voucher').push().key;
-
-  var voucher={
-  shortDescription: shortDescription,
-  description : description,
-  url: url,
-  name : name,
-  id : newPostKey
-  }
-
-  var updates = {};
-  updates['/voucher/' + newPostKey] = voucher;
-  firebase.database().ref().update(updates);
-  navigator.notification.alert("Gutschein angelegt!", function(){}, name, "Weiter");
-  window.location.reload();
-});
-
-function deleteVoucher(id){
-  firebase.database().ref("/voucher/" + id).remove();
-  navigator.notification.alert("Gutschein gelöscht!", function(){}, "Gutschein", "Weiter");
-  window.location.reload();
-}
-
-function deleteEvent(id){
-  firebase.database().ref("/events/" + id).remove();
-  navigator.notification.alert("Veranstaltung gelöscht!", function(){}, "Veranstaltung", "Weiter");
-  window.location.reload();
-}
 
 $("#logout-button").click(function(){
   firebase.auth().signOut().then(function() {
