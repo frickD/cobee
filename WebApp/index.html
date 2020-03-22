@@ -29,7 +29,7 @@
   </div>
 
 
-  <div id="app">
+  <div id="app" style="display:none">
   <nav class="navbar navbar-light fixed-top cobee-header">
 
         <a class="navbar-brand" style="margin-right: 0;" href="index.html">
@@ -205,7 +205,7 @@
               Mit CoBee bieten wir auch kleineren Unternehmen die Möglichkeit sich eine Online Präsenz zu schaffen, um die eventuell gefährdete Lage zu sichern.<br><br>
 
               Aktuell ist der Ort Gauting umgesetzt.<br>
-              Unternehmen können sich selbsttändig registriegen und Waren die verkauft werden auswählen oder gegebenenfalls anlegen. Smoit erscheinen nach und nach immer mehr Einträge auf der Karte.<br><br>
+              Unternehmen können sich selbsttändig registriegen und Waren die verkauft werden auswählen oder gegebenenfalls anlegen. Somit erscheinen nach und nach immer mehr Einträge auf der Karte.<br><br>
               CoBee versorgt euch auch mithilfe eines Chatbots mit den wichtigsten Informationen bzw. beantwortet eure Fragen (aktuell: Medikamente, Preise, nächsten Einkaufsmöglichkeiten | geplant: aktuelle Informationen zu wichtigen Nachrichten, Verhaltensweisen, aktuelle Umstände etc.)<br>
               Außerdem ist es möglich euch bei der Medikamenten erkennung zu helfen, macht hierzu ein Foto von dem Medikament und Cobee liefert euch dank AI alle bekannten Daten zu diesem.
 
@@ -249,6 +249,7 @@
           </div>
         </div>
       </div>
+
     </div>
   </div>
 
@@ -301,6 +302,81 @@
       </div>
       <div class="modal-footer">
         <button onclick="window.location.reload()" type="button" class="btn btn-cobee">Okay</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="medicament-modal" class="modal" tabindex="-1" role="dialog">
+  <div class="modal-dialog" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title">AI Medikamenten Suche</h5>
+      </div>
+      <div class="modal-body">
+        <div class="card">
+          <div class="card-header color-background">
+            Folgendes Medikament gefunden:
+          </div>
+          <div class="card-body">
+            <div class="text-center">
+              <img  id="medicament-img" style="width:100px"src="img/cobee/info.png"></img>
+            </div>
+            <h5 id="medicament-title"  style="margin-top:30px"class="card-title">Willkommen bei CoBee.</h5>
+            <p id="medicament-description"  class="card-text"></p>
+          </div>
+        </div>
+
+        <div id="accordion" style="margin-top:30px">
+
+          <div class="card">
+            <div class="card-header color-background" id="headingTwo">
+              <h5 class="mb-0">
+                <button  style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                  Verwendung.
+                </button>
+              </h5>
+            </div>
+            <div id="collapseOne" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div  id="medicament-usage" class="card-body">
+
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header color-background" id="headingTwo">
+              <h5 class="mb-0">
+                <button style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                  Effekt.
+                </button>
+              </h5>
+            </div>
+            <div id="collapseTwo" class="collapse" aria-labelledby="headingTwo" data-parent="#accordion">
+              <div id="medicament-effect" class="card-body">
+
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div class="card-header color-background" id="headingThree">
+              <h5 class="mb-0">
+                <button style="color:white" class="btn btn-link collapsed" data-toggle="collapse" data-target="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                  Inhaltsstoffe.
+                </button>
+              </h5>
+            </div>
+            <div id="collapseThree" class="collapse" aria-labelledby="headingThree" data-parent="#accordion">
+              <div id="medicament-substances"  class="card-body">
+
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-dismiss="modal">Okay</button>
       </div>
     </div>
   </div>
@@ -391,7 +467,6 @@ var userInformation;
 
    firebase.database().ref('/shops/').on('value', function(snapshot) {
       shops = snapshot.val();
-      displayShops("all");
       displayShops("all");
       /*
       shops.forEach(function(shop){
@@ -487,6 +562,7 @@ var tabs = [{
 
 
   function displayShops(category){
+    //runLoader(true);
     let shopTags = ["pharmacy", "supermarket", "gasstation", "restaurant", "all"];
     $("#shops-container").html("");
     layerGroup.clearLayers();
@@ -505,13 +581,14 @@ var tabs = [{
         setTimeout(function() {
           mymap.invalidateSize();
           mymap.fitBounds(layerGroup.getBounds());
+          runLoader(false);
         }, 200);
         setTimeout(() => {
           anime({
             targets: '#cobee-icon',
             translateY: -50
           });
-        }, 500);
+        }, 1000);
       }
     });
     if(category == "all"){
@@ -694,6 +771,7 @@ var tabs = [{
   }
 
   function requestAPI(form) {
+    runLoader(true);
     var settings = {
       "async": true,
       "crossDomain": true,
@@ -708,17 +786,23 @@ var tabs = [{
       "data": form
     }
     $.ajax(settings).done(function(response) {
+      runLoader(false);
       var res = JSON.parse(response);
       console.log(res);
       if (typeof res.images[0].classifiers[0].classes[0].class != "undefined") {
         var product = res.images[0].classifiers[0].classes[0].class;
         if(product=="Dobendan_Pill"){
-          alert("NEO");
-          alert(products[12].name);
+          $("#medicament-img").attr("src",products[12].img);
+          $("#medicament-title").text(products[12].name);
+          $("#medicament-description").text(products[12].fieldofuse);
+          $("#medicament-usage").text(products[12].dosage);
+          $("#medicament-substances").text(products[12].activesubstances);
+          $("#medicament-effect").text(products[12].contraindications);
+          $("#medicament-modal").modal("show");
         }
       }
     }).fail(function(e) {
-
+      runLoader(false);
     });
   }
 
