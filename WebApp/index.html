@@ -501,29 +501,84 @@ var tabs = [{
 
 
   $("#send_text").click(function() {
-    //$("#mrpat").attr("src", "img/mrpat.gif");
     var question = $("#ask_input").val();
     var settings = {
       "async": true,
       "crossDomain": true,
-      "url": "https://gateway-fra.watsonplatform.net/assistant/api/v2/assistants/97454bee-f5db-4b3d-bcd8-0e72eda5c5ab/sessions/cd3a39f7-9328-4f98-bd4c-9f823a75771f/message?version=2020-02-05",
+      "url": "https://gateway-fra.watsonplatform.net/assistant/api/v2/assistants/97454bee-f5db-4b3d-bcd8-0e72eda5c5ab/sessions?version=2020-02-05",
       "method": "POST",
       "headers": {
-        "content-type": "application/json",
-        "authorization": "Basic YXBpa2V5Ok90QkJzNDdYVFVXeGcwSGlmT09wMEFDUnJMSWhQUlBEenVxUlFOYnR2V3dP",
-        "cache-control": "no-cache",
-        "postman-token": "c36e1b6c-4ff0-ed01-98cf-e7376f957690"
-      },
-      "processData": false,
-      "data": "{\"input\": {\"text\": \"" + question + "\"}}"
+        "Authorization": "Basic YXBpa2V5Ok90QkJzNDdYVFVXeGcwSGlmT09wMEFDUnJMSWhQUlBEenVxUlFOYnR2V3dP",
+      }
     }
 
-    $.ajax(settings).done(function(response) {
-      console.log(response);
-      parseChatbotResponse(response);
+    $.ajax(settings).done(function (response) {
+      let url = "https://gateway-fra.watsonplatform.net/assistant/api/v2/assistants/97454bee-f5db-4b3d-bcd8-0e72eda5c5ab/sessions/" + response.session_id +"/message?version=2020-02-05"
+      var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": url,
+        "method": "POST",
+        "headers": {
+          "content-type": "application/json",
+          "authorization": "Basic YXBpa2V5Ok90QkJzNDdYVFVXeGcwSGlmT09wMEFDUnJMSWhQUlBEenVxUlFOYnR2V3dP",
+
+        },
+        "processData": false,
+        "data": "{\"input\": {\"text\": \"" + question + "\"}}"
+      }
+
+      $.ajax(settings).done(function(response) {
+        parseChatbotResponse(response);
+        console.log(response);
+      });
     });
+    //$("#mrpat").attr("src", "img/mrpat.gif");
   });
 
+  function parseChatbotResponse(response) {
+    var intent = response.output.intents[0].intent;
+    var entity;
+    if(response.output.entities[0].value) entity =response.output.entities[0].value;
+    if(intent === "ShopSearch" && entity === "Apotheken"){
+      displayShops("pharmacy");
+    }else if(intent === "ShopSearch" && entity === "Restaurant"){
+      displayShops("restaurant");
+    }else if(intent === "ShopSearch" && entity === "Supermärkte"){
+      displayShops("supermarket");
+    }else if(intent === "ShopSearch" && entity === "Tankstellen"){
+      displayShops("gasstation");
+    }else if(intent === "MedicamentSearch" && entity == "Augenschmerzen"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Durchfall"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Fieber"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Gliederschmerzen"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Grippe"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Herz"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Kopfschmerzen"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Kreislauf"){
+      //;
+    }else if(intent === "MedicamentSearch" && entity == "Ohrenschmerzen"){
+      //;
+    }else if(intent === "Price" && entity == "Augentropfen"){
+      //;
+    }else if(intent === "Price" && entity == "Durchfallmittel"){
+      //;
+    }else if(intent === "Price" && entity == "Ibuprofen"){
+      //;
+    }else if(intent === "Price" && entity == "Nasenspray"){
+      //;
+    }else {
+      alert("Sorry, I haven't unterstand you. Please try again.");
+
+    }
+  }
 
 
 </script>
